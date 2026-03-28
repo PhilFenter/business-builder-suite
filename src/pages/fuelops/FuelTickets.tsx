@@ -419,6 +419,12 @@ const TicketCard = ({
               {ticket.aircraft_tail_number && <span><span className="text-muted-foreground">Tail:</span> {ticket.aircraft_tail_number}</span>}
               {ticket.aircraft_type && <span><span className="text-muted-foreground">Type:</span> {ticket.aircraft_type}</span>}
               {ticket.gallons_requested && <span><span className="text-muted-foreground">Gal:</span> {ticket.gallons_requested}</span>}
+              {ticket.requested_date && (
+                <span>
+                  <span className="text-muted-foreground">Date:</span>{" "}
+                  {format(new Date(ticket.requested_date + "T00:00:00"), "MMM d, yyyy")}
+                </span>
+              )}
             </div>
 
             {ticket.notes && <p className="text-sm text-muted-foreground">{ticket.notes}</p>}
