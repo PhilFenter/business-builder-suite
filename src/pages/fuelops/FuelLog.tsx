@@ -26,6 +26,7 @@ const FuelLog = () => {
 
   const [form, setForm] = useState({
     customer_id: "",
+    customer_name: "",
     fuel_type: "" as "100LL" | "Jet-A" | "",
     gallons: "",
     price_per_gallon: "",
