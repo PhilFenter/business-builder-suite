@@ -161,6 +161,15 @@ const FuelTickets = () => {
     if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
   };
 
+  // For fuel tickets, navigate to pre-filled log; for others, mark completed directly
+  const handleComplete = (ticket: FuelTicket) => {
+    if (ticket.service_type === "fuel") {
+      navigate(`/fuelops/log?ticket=${ticket.id}`);
+    } else {
+      updateStatus(ticket.id, "completed");
+    }
+  };
+
   const activeTickets = tickets.filter(t => t.status === "pending" || t.status === "in_progress");
   const today = format(new Date(), "yyyy-MM-dd");
 
