@@ -15,6 +15,8 @@ import { cn } from "@/lib/utils";
 import AircraftTypeInput from "@/components/fuelops/AircraftTypeInput";
 import CustomerInput from "@/components/fuelops/CustomerInput";
 
+import type { Tables } from "@/integrations/supabase/types";
+
 const FuelLog = () => {
   const { user } = useAuth();
   const { toast } = useToast();
