@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Fuel } from "lucide-react";
+import { Plane } from "lucide-react";
 
 const Navbar = () => {
   return (
@@ -7,9 +7,12 @@ const Navbar = () => {
       <div className="container mx-auto px-6 h-16 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           <div className="rounded-lg bg-primary p-1.5">
-            <Fuel className="w-5 h-5 text-primary-foreground" />
+            <Plane className="w-5 h-5 text-primary-foreground" />
           </div>
-          <span className="font-display font-bold text-xl">FuelOps</span>
+          <div className="flex flex-col leading-none">
+            <span className="font-display font-bold text-lg">Hillcrest</span>
+            <span className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground">Aircraft Company</span>
+          </div>
         </div>
 
         <div className="hidden md:flex items-center gap-8">

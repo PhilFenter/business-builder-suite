@@ -21,8 +21,8 @@ const HeroSection = () => {
       <div className="relative z-10 container mx-auto px-6 py-24 lg:py-32">
         <div className="max-w-2xl">
           <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 mb-8">
-            <Fuel className="w-4 h-4 text-primary" />
-            <span className="text-sm font-medium text-primary">FBO Fuel Management</span>
+            <Plane className="w-4 h-4 text-primary" />
+            <span className="text-sm font-medium text-primary">Hillcrest Aircraft Company</span>
           </div>
 
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold font-display leading-tight mb-6">

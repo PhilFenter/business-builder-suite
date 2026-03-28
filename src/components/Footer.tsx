@@ -1,4 +1,4 @@
-import { Fuel } from "lucide-react";
+import { Plane } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -7,12 +7,12 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-2.5">
             <div className="rounded-lg bg-primary p-1.5">
-              <Fuel className="w-4 h-4 text-primary-foreground" />
+              <Plane className="w-4 h-4 text-primary-foreground" />
             </div>
-            <span className="font-display font-bold text-lg">FuelOps</span>
+            <span className="font-display font-bold text-lg">Hillcrest Aircraft Company</span>
           </div>
           <p className="text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} FuelOps. All rights reserved.
+            &copy; {new Date().getFullYear()} Hillcrest Aircraft Company. 60 years of aviation excellence.
           </p>
         </div>
       </div>
