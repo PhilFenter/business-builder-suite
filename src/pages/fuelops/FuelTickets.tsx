@@ -238,9 +238,38 @@ const FuelTickets = () => {
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label>Aircraft Type</Label>
-                  <AircraftTypeInput value={form.aircraft_type} onChange={(v) => setForm({ ...form, aircraft_type: v })} />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Aircraft Type</Label>
+                    <AircraftTypeInput value={form.aircraft_type} onChange={(v) => setForm({ ...form, aircraft_type: v })} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Service Date</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-full justify-start text-left font-normal",
+                            !form.requested_date && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="w-4 h-4 mr-2" />
+                          {form.requested_date ? format(form.requested_date, "PPP") : "Today"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={form.requested_date}
+                          onSelect={(d) => setForm({ ...form, requested_date: d })}
+                          initialFocus
+                          className={cn("p-3 pointer-events-auto")}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <p className="text-xs text-muted-foreground">Date performed or future request date</p>
+                  </div>
                 </div>
 
                 {/* Fuel-specific fields */}
