@@ -2,7 +2,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Clock, Award, Wrench, Users, MapPin, Shield } from "lucide-react";
-import hangarImage from "@/assets/hangar-maintenance.jpg";
+import helicopterImage from "@/assets/about-helicopter.jpg";
 
 const stats = [
   { value: "1956", label: "Established" },
