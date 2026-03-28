@@ -54,6 +54,7 @@ interface FuelTicket {
   completed_at: string | null;
   created_at: string;
   requested_date: string | null;
+  requested_time: string | null;
   customers: { name: string } | null;
 }
 
@@ -72,6 +73,7 @@ const FuelTickets = () => {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [calendarOpen, setCalendarOpen] = useState(false);
 
   const defaultForm = {
     service_type: "fuel" as string,
@@ -83,6 +85,7 @@ const FuelTickets = () => {
     prist: false,
     gallons_requested: "",
     requested_date: new Date() as Date | undefined,
+    requested_time: "",
     notes: "",
   };
   const [form, setForm] = useState(defaultForm);
@@ -132,6 +135,7 @@ const FuelTickets = () => {
       prist: isFuelService ? form.prist : false,
       gallons_requested: form.gallons_requested ? parseFloat(form.gallons_requested) : null,
       requested_date: form.requested_date ? format(form.requested_date, "yyyy-MM-dd") : null,
+      requested_time: form.requested_time || null,
       notes: form.notes || null,
     });
 
@@ -250,14 +254,14 @@ const FuelTickets = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Aircraft Type</Label>
-                    <AircraftTypeInput value={form.aircraft_type} onChange={(v) => setForm({ ...form, aircraft_type: v })} />
-                  </div>
+                <div className="space-y-2">
+                  <Label>Aircraft Type</Label>
+                  <AircraftTypeInput value={form.aircraft_type} onChange={(v) => setForm({ ...form, aircraft_type: v })} />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="space-y-2">
                     <Label>Service Date</Label>
-                    <Popover>
+                    <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
                       <PopoverTrigger asChild>
                         <Button
                           variant="outline"
@@ -274,13 +278,24 @@ const FuelTickets = () => {
                         <Calendar
                           mode="single"
                           selected={form.requested_date}
-                          onSelect={(d) => setForm({ ...form, requested_date: d })}
+                          onSelect={(d) => {
+                            setForm({ ...form, requested_date: d });
+                            setCalendarOpen(false);
+                          }}
                           initialFocus
                           className={cn("p-3 pointer-events-auto")}
                         />
                       </PopoverContent>
                     </Popover>
-                    <p className="text-xs text-muted-foreground">Date performed or future request date</p>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>ETA / Departure Time</Label>
+                    <Input
+                      type="time"
+                      value={form.requested_time}
+                      onChange={(e) => setForm({ ...form, requested_time: e.target.value })}
+                    />
+                    <p className="text-xs text-muted-foreground">Arrival or departure time</p>
                   </div>
                 </div>
 
@@ -465,6 +480,7 @@ const TicketCard = ({
                 <span>
                   <span className="text-muted-foreground">Date:</span>{" "}
                   {format(new Date(ticket.requested_date + "T00:00:00"), "MMM d, yyyy")}
+                  {ticket.requested_time && ` @ ${ticket.requested_time.slice(0, 5)}`}
                 </span>
               )}
             </div>
