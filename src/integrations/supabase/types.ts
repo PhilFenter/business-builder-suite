@@ -143,6 +143,7 @@ export type Database = {
           id: string
           notes: string | null
           prist: boolean
+          requested_date: string | null
           service_type: string
           status: string
           updated_at: string
@@ -162,6 +163,7 @@ export type Database = {
           id?: string
           notes?: string | null
           prist?: boolean
+          requested_date?: string | null
           service_type?: string
           status?: string
           updated_at?: string
@@ -181,6 +183,7 @@ export type Database = {
           id?: string
           notes?: string | null
           prist?: boolean
+          requested_date?: string | null
           service_type?: string
           status?: string
           updated_at?: string
