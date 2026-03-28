@@ -62,6 +62,7 @@ export type Database = {
       fuel_deliveries: {
         Row: {
           aircraft_tail_number: string | null
+          aircraft_type: string | null
           created_at: string
           customer_id: string
           delivered_at: string
@@ -69,13 +70,17 @@ export type Database = {
           fuel_type: Database["public"]["Enums"]["fuel_type"]
           gallons: number
           id: string
+          meter_start: number | null
+          meter_stop: number | null
           notes: string | null
           price_per_gallon: number
+          prist: boolean
           total_amount: number
           truck_id: string | null
         }
         Insert: {
           aircraft_tail_number?: string | null
+          aircraft_type?: string | null
           created_at?: string
           customer_id: string
           delivered_at?: string
@@ -83,13 +88,17 @@ export type Database = {
           fuel_type: Database["public"]["Enums"]["fuel_type"]
           gallons: number
           id?: string
+          meter_start?: number | null
+          meter_stop?: number | null
           notes?: string | null
           price_per_gallon: number
+          prist?: boolean
           total_amount: number
           truck_id?: string | null
         }
         Update: {
           aircraft_tail_number?: string | null
+          aircraft_type?: string | null
           created_at?: string
           customer_id?: string
           delivered_at?: string
@@ -97,8 +106,11 @@ export type Database = {
           fuel_type?: Database["public"]["Enums"]["fuel_type"]
           gallons?: number
           id?: string
+          meter_start?: number | null
+          meter_stop?: number | null
           notes?: string | null
           price_per_gallon?: number
+          prist?: boolean
           total_amount?: number
           truck_id?: string | null
         }
@@ -108,6 +120,75 @@ export type Database = {
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fuel_tickets: {
+        Row: {
+          aircraft_tail_number: string | null
+          aircraft_type: string | null
+          assigned_driver_id: string | null
+          completed_at: string | null
+          created_at: string
+          created_by: string
+          customer_id: string | null
+          delivery_id: string | null
+          fuel_type: Database["public"]["Enums"]["fuel_type"]
+          gallons_requested: number | null
+          id: string
+          notes: string | null
+          prist: boolean
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          aircraft_tail_number?: string | null
+          aircraft_type?: string | null
+          assigned_driver_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          created_by: string
+          customer_id?: string | null
+          delivery_id?: string | null
+          fuel_type: Database["public"]["Enums"]["fuel_type"]
+          gallons_requested?: number | null
+          id?: string
+          notes?: string | null
+          prist?: boolean
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          aircraft_tail_number?: string | null
+          aircraft_type?: string | null
+          assigned_driver_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string
+          customer_id?: string | null
+          delivery_id?: string | null
+          fuel_type?: Database["public"]["Enums"]["fuel_type"]
+          gallons_requested?: number | null
+          id?: string
+          notes?: string | null
+          prist?: boolean
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fuel_tickets_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fuel_tickets_delivery_id_fkey"
+            columns: ["delivery_id"]
+            isOneToOne: false
+            referencedRelation: "fuel_deliveries"
             referencedColumns: ["id"]
           },
         ]
@@ -209,6 +290,60 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      pilot_requests: {
+        Row: {
+          acknowledged_by: string | null
+          aircraft_tail_number: string | null
+          aircraft_type: string | null
+          created_at: string
+          estimated_departure: string | null
+          fuel_type: Database["public"]["Enums"]["fuel_type"] | null
+          gallons_requested: number | null
+          id: string
+          notes: string | null
+          pilot_email: string | null
+          pilot_name: string
+          pilot_phone: string | null
+          prist: boolean
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          acknowledged_by?: string | null
+          aircraft_tail_number?: string | null
+          aircraft_type?: string | null
+          created_at?: string
+          estimated_departure?: string | null
+          fuel_type?: Database["public"]["Enums"]["fuel_type"] | null
+          gallons_requested?: number | null
+          id?: string
+          notes?: string | null
+          pilot_email?: string | null
+          pilot_name: string
+          pilot_phone?: string | null
+          prist?: boolean
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          acknowledged_by?: string | null
+          aircraft_tail_number?: string | null
+          aircraft_type?: string | null
+          created_at?: string
+          estimated_departure?: string | null
+          fuel_type?: Database["public"]["Enums"]["fuel_type"] | null
+          gallons_requested?: number | null
+          id?: string
+          notes?: string | null
+          pilot_email?: string | null
+          pilot_name?: string
+          pilot_phone?: string | null
+          prist?: boolean
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
