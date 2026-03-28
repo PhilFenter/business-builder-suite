@@ -30,7 +30,7 @@ const Billing = () => {
   const fetchInvoices = async () => {
     let query = supabase.from("invoices").select("*, customers(name)").order("created_at", { ascending: false });
     if (statusFilter !== "all") {
-      query = query.eq("status", statusFilter);
+      query = query.eq("status", statusFilter as "draft" | "sent" | "paid" | "overdue");
     }
     const { data } = await query;
     if (data) {
