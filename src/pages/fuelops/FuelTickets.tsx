@@ -407,7 +407,7 @@ const FuelTickets = () => {
               </Card>
             ) : (
               nowTickets.map((ticket) => (
-                <TicketCard key={ticket.id} ticket={ticket} isDriver={isDriver} onUpdate={updateStatus} />
+                <TicketCard key={ticket.id} ticket={ticket} isDriver={isDriver} onUpdate={updateStatus} onComplete={handleComplete} />
               ))
             )}
           </TabsContent>
