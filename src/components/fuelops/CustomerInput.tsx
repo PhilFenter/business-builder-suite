@@ -17,7 +17,7 @@ const CustomerInput = ({ customers, selectedId, customName, onSelectAccount, onT
   const ref = useRef<HTMLDivElement>(null);
 
   const displayValue = selectedId
-    ? customers.find(c => c.id === selectedId)?.name ?? ""
+    ? (customers.find(c => c.id === selectedId)?.name ?? customName)
     : customName;
 
   const filtered = query
