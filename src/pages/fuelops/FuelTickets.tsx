@@ -53,6 +53,7 @@ interface FuelTicket {
   assigned_driver_id: string | null;
   completed_at: string | null;
   created_at: string;
+  requested_date: string | null;
   customers: { name: string } | null;
 }
 
