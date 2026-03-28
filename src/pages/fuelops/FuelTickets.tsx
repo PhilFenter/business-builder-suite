@@ -258,6 +258,7 @@ const FuelTickets = () => {
                     <Label>Aircraft Type</Label>
                     <AircraftTypeInput value={form.aircraft_type} onChange={(v) => setForm({ ...form, aircraft_type: v })} />
                   </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="space-y-2">
                     <Label>Service Date</Label>
                     <Popover>
@@ -277,13 +278,23 @@ const FuelTickets = () => {
                         <Calendar
                           mode="single"
                           selected={form.requested_date}
-                          onSelect={(d) => setForm({ ...form, requested_date: d })}
+                          onSelect={(d) => {
+                            setForm({ ...form, requested_date: d });
+                          }}
                           initialFocus
                           className={cn("p-3 pointer-events-auto")}
                         />
                       </PopoverContent>
                     </Popover>
-                    <p className="text-xs text-muted-foreground">Date performed or future request date</p>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>ETA / Departure Time</Label>
+                    <Input
+                      type="time"
+                      value={form.requested_time}
+                      onChange={(e) => setForm({ ...form, requested_time: e.target.value })}
+                    />
+                    <p className="text-xs text-muted-foreground">Arrival or departure time</p>
                   </div>
                 </div>
 
