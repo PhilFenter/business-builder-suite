@@ -444,10 +444,12 @@ const TicketCard = ({
   ticket,
   isDriver,
   onUpdate,
+  onComplete,
 }: {
   ticket: FuelTicket;
   isDriver: boolean;
   onUpdate: (id: string, status: string) => void;
+  onComplete: (ticket: FuelTicket) => void;
 }) => {
   const [expanded, setExpanded] = useState(ticket.status === "in_progress");
   const svc = SERVICE_TYPES.find(s => s.value === ticket.service_type) ?? SERVICE_TYPES[0];
