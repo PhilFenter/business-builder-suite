@@ -54,6 +54,7 @@ interface FuelTicket {
   completed_at: string | null;
   created_at: string;
   requested_date: string | null;
+  requested_time: string | null;
   customers: { name: string } | null;
 }
 
