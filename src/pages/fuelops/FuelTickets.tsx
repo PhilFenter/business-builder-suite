@@ -73,6 +73,7 @@ const FuelTickets = () => {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [calendarOpen, setCalendarOpen] = useState(false);
 
   const defaultForm = {
     service_type: "fuel" as string,
