@@ -523,6 +523,9 @@ const TicketCard = ({
               </Badge>
             )}
             {ticket.prist && <Badge variant="outline" className="bg-purple-500/10 text-purple-400">Prist</Badge>}
+            {!expanded && customerDisplay && (
+              <span className="text-sm font-medium text-foreground truncate">{customerDisplay}</span>
+            )}
             {!expanded && ticket.aircraft_tail_number && (
               <span className="text-sm text-muted-foreground truncate">{ticket.aircraft_tail_number}</span>
             )}
