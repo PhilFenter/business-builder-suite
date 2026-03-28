@@ -86,7 +86,7 @@ const FuelLog = () => {
         setForm({
           ...emptyForm,
           customer_id: data.customer_id ?? "",
-          customer_name: data.customer_name ?? "",
+          customer_name: data.customers?.name ?? data.customer_name ?? "",
           fuel_type: (data.fuel_type as "100LL" | "Jet-A") ?? "",
           gallons: data.gallons_requested ? String(data.gallons_requested) : "",
           aircraft_tail_number: data.aircraft_tail_number ?? "",
