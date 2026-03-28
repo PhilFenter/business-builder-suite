@@ -2,7 +2,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Clock, Award, Wrench, Users, MapPin, Shield } from "lucide-react";
-import hangarImage from "@/assets/hangar-maintenance.jpg";
+import helicopterImage from "@/assets/about-helicopter.jpg";
 
 const stats = [
   { value: "1956", label: "Established" },
@@ -28,7 +28,7 @@ const About = () => {
       {/* Hero */}
       <section className="relative pt-16">
         <div className="relative h-[50vh] min-h-[400px] overflow-hidden">
-          <img src={hangarImage} alt="Hillcrest Aircraft hangar" className="w-full h-full object-cover" width={1920} height={800} />
+          <img src={helicopterImage} alt="Hillcrest Aircraft helicopter at sunset" className="w-full h-full object-cover" width={1920} height={800} />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-6 lg:p-12">
             <div className="container mx-auto">
