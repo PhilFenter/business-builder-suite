@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/hero-fbo.jpg";
-import { Fuel, Tablet, CreditCard } from "lucide-react";
+import { Fuel, Tablet, CreditCard, Plane } from "lucide-react";
 
 const HeroSection = () => {
   return (
