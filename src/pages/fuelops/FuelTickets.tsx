@@ -18,6 +18,8 @@ import { format } from "date-fns";
 import AircraftTypeInput from "@/components/fuelops/AircraftTypeInput";
 import CustomerInput from "@/components/fuelops/CustomerInput";
 import type { Tables } from "@/integrations/supabase/types";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const SERVICE_TYPES = [
   { value: "fuel", label: "Fuel", icon: Fuel },
