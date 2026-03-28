@@ -92,8 +92,8 @@ const AircraftTypeInput = ({ value, onChange }: AircraftTypeInputProps) => {
         autoComplete="off"
       />
       {open && filtered.length > 0 && (
-        <div className="absolute z-50 mt-1 w-full max-h-48 overflow-y-auto rounded-md border border-border bg-popover shadow-md">
-          {filtered.slice(0, 15).map((aircraft) => (
+        <div className="absolute z-50 mt-1 w-full max-h-64 overflow-y-auto rounded-md border border-border bg-popover shadow-md">
+          {filtered.map((aircraft) => (
             <button
               key={aircraft}
               type="button"
