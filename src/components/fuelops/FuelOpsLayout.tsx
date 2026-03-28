@@ -15,8 +15,8 @@ const FuelOpsLayout = ({ children }: { children: ReactNode }) => {
 
   const navItems = [
     { to: "/fuelops", icon: LayoutDashboard, label: "Dashboard", roles: ["admin", "driver", "billing_clerk"] },
-    { to: "/fuelops/log", icon: Truck, label: "Log Delivery", roles: ["admin", "driver"] },
     { to: "/fuelops/tickets", icon: ClipboardList, label: "Service Tickets", roles: ["admin", "driver", "billing_clerk"] },
+    { to: "/fuelops/log", icon: Truck, label: "Log Delivery", roles: ["admin", "driver"] },
     { to: "/fuelops/customers", icon: Users, label: "Customers", roles: ["admin", "billing_clerk"] },
     { to: "/fuelops/billing", icon: FileText, label: "Billing", roles: ["admin", "billing_clerk"] },
   ];
