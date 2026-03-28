@@ -91,7 +91,7 @@ const FuelLog = () => {
       toast({ title: "Delivery Logged", description: `${form.gallons} gal ${form.fuel_type}${form.prist ? " +Prist" : ""} — $${totalAmount}` });
       setTimeout(() => {
         setSuccess(false);
-        setForm({ customer_id: "", fuel_type: "", gallons: "", price_per_gallon: "", aircraft_tail_number: "", aircraft_type: "", prist: false, meter_start: "", meter_stop: "", truck_id: "", notes: "" });
+        setForm({ customer_id: "", customer_name: "", fuel_type: "", gallons: "", price_per_gallon: "", aircraft_tail_number: "", aircraft_type: "", prist: false, meter_start: "", meter_stop: "", truck_id: "", notes: "" });
       }, 2000);
     }
   };
