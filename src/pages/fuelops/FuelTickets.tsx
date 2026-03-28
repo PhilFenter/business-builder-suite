@@ -479,6 +479,7 @@ const TicketCard = ({
                 <span>
                   <span className="text-muted-foreground">Date:</span>{" "}
                   {format(new Date(ticket.requested_date + "T00:00:00"), "MMM d, yyyy")}
+                  {ticket.requested_time && ` @ ${ticket.requested_time.slice(0, 5)}`}
                 </span>
               )}
             </div>
