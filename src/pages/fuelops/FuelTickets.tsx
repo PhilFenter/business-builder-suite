@@ -11,23 +11,42 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ClipboardList, Plus, Truck, Check, X, Loader2, RefreshCw } from "lucide-react";
+import { ClipboardList, Plus, Truck, Check, X, Loader2, RefreshCw, Fuel, Droplets, UtensilsCrossed, Snowflake } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import AircraftTypeInput from "@/components/fuelops/AircraftTypeInput";
+import CustomerInput from "@/components/fuelops/CustomerInput";
 import type { Tables } from "@/integrations/supabase/types";
+
+const SERVICE_TYPES = [
+  { value: "fuel", label: "Fuel", icon: Fuel },
+  { value: "de_ice", label: "De-Ice", icon: Snowflake },
+  { value: "lav_service", label: "Lav Service", icon: Droplets },
+  { value: "catering", label: "Catering", icon: UtensilsCrossed },
+  { value: "other", label: "Other", icon: ClipboardList },
+] as const;
+
+const serviceColors: Record<string, string> = {
+  fuel: "bg-amber-500/10 text-amber-400 border-amber-500/20",
+  de_ice: "bg-sky-500/10 text-sky-400 border-sky-500/20",
+  lav_service: "bg-violet-500/10 text-violet-400 border-violet-500/20",
+  catering: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+  other: "bg-muted text-muted-foreground border-border",
+};
 
 interface FuelTicket {
   id: string;
   customer_id: string | null;
+  customer_name: string | null;
   aircraft_tail_number: string | null;
   aircraft_type: string | null;
-  fuel_type: string;
+  fuel_type: string | null;
   prist: boolean;
   gallons_requested: number | null;
   notes: string | null;
   status: string;
+  service_type: string;
   created_by: string;
   assigned_driver_id: string | null;
   completed_at: string | null;
@@ -51,15 +70,18 @@ const FuelTickets = () => {
   const [showForm, setShowForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  const [form, setForm] = useState({
+  const defaultForm = {
+    service_type: "fuel" as string,
     customer_id: "",
+    customer_name: "",
     aircraft_tail_number: "",
     aircraft_type: "",
     fuel_type: "" as "100LL" | "Jet-A" | "",
     prist: false,
     gallons_requested: "",
     notes: "",
-  });
+  };
+  const [form, setForm] = useState(defaultForm);
 
   const fetchTickets = async () => {
     const { data } = await supabase
@@ -76,7 +98,6 @@ const FuelTickets = () => {
       if (data) setCustomers(data);
     });
 
-    // Realtime subscription
     const channel = supabase
       .channel("fuel-tickets-realtime")
       .on("postgres_changes", { event: "*", schema: "public", table: "fuel_tickets" }, () => {
@@ -87,18 +108,24 @@ const FuelTickets = () => {
     return () => { supabase.removeChannel(channel); };
   }, []);
 
+  const isFuelService = form.service_type === "fuel";
+
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user || !form.fuel_type) return;
+    if (!user) return;
+    if (isFuelService && !form.fuel_type) return;
+
     setSubmitting(true);
 
     const { error } = await supabase.from("fuel_tickets").insert({
       created_by: user.id,
+      service_type: form.service_type,
       customer_id: form.customer_id || null,
+      customer_name: form.customer_name || null,
       aircraft_tail_number: form.aircraft_tail_number || null,
       aircraft_type: form.aircraft_type || null,
-      fuel_type: form.fuel_type as "100LL" | "Jet-A",
-      prist: form.prist,
+      fuel_type: isFuelService ? (form.fuel_type as "100LL" | "Jet-A") : null,
+      prist: isFuelService ? form.prist : false,
       gallons_requested: form.gallons_requested ? parseFloat(form.gallons_requested) : null,
       notes: form.notes || null,
     });
@@ -107,8 +134,9 @@ const FuelTickets = () => {
     if (error) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
     } else {
-      toast({ title: "Ticket Created", description: "Fuel ticket sent to the flight line" });
-      setForm({ customer_id: "", aircraft_tail_number: "", aircraft_type: "", fuel_type: "", prist: false, gallons_requested: "", notes: "" });
+      const svc = SERVICE_TYPES.find(s => s.value === form.service_type);
+      toast({ title: "Ticket Created", description: `${svc?.label} ticket sent to the flight line` });
+      setForm(defaultForm);
       setShowForm(false);
     }
   };
@@ -133,8 +161,8 @@ const FuelTickets = () => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="font-display text-2xl font-bold">Fuel Tickets</h1>
-            <p className="text-muted-foreground text-sm">Lobby-to-flight-line fuel requests</p>
+            <h1 className="font-display text-2xl font-bold">Service Tickets</h1>
+            <p className="text-muted-foreground text-sm">Lobby-to-flight-line service requests</p>
           </div>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={fetchTickets}>
@@ -154,22 +182,46 @@ const FuelTickets = () => {
             <CardHeader>
               <CardTitle className="font-display text-lg flex items-center gap-2">
                 <ClipboardList className="w-5 h-5 text-primary" />
-                New Fuel Ticket
+                New Service Ticket
               </CardTitle>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleCreate} className="space-y-4">
+                {/* Service Type Selector */}
+                <div className="space-y-2">
+                  <Label>Service Type *</Label>
+                  <div className="flex flex-wrap gap-2">
+                    {SERVICE_TYPES.map((svc) => (
+                      <button
+                        key={svc.value}
+                        type="button"
+                        onClick={() => setForm({ ...form, service_type: svc.value })}
+                        className={cn(
+                          "flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-all",
+                          form.service_type === svc.value
+                            ? "border-primary bg-primary/10 text-primary"
+                            : "border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
+                        )}
+                      >
+                        <svc.icon className="w-4 h-4" />
+                        {svc.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Customer — fillable for transients */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label>Customer</Label>
-                    <Select value={form.customer_id} onValueChange={(v) => setForm({ ...form, customer_id: v })}>
-                      <SelectTrigger><SelectValue placeholder="Select customer" /></SelectTrigger>
-                      <SelectContent>
-                        {customers.map((c) => (
-                          <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <Label>Customer / Pilot Name</Label>
+                    <CustomerInput
+                      customers={customers}
+                      selectedId={form.customer_id}
+                      customName={form.customer_name}
+                      onSelectAccount={(id) => setForm({ ...form, customer_id: id })}
+                      onTypeCustom={(name) => setForm({ ...form, customer_name: name })}
+                    />
+                    <p className="text-xs text-muted-foreground">Type a name for transients or select a house account</p>
                   </div>
                   <div className="space-y-2">
                     <Label>Tail #</Label>
@@ -181,43 +233,59 @@ const FuelTickets = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div className="space-y-2">
-                    <Label>Aircraft Type</Label>
-                    <AircraftTypeInput value={form.aircraft_type} onChange={(v) => setForm({ ...form, aircraft_type: v })} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Fuel Type *</Label>
-                    <Select value={form.fuel_type} onValueChange={(v) => setForm({ ...form, fuel_type: v as any })}>
-                      <SelectTrigger><SelectValue placeholder="Fuel type" /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="100LL">100LL</SelectItem>
-                        <SelectItem value="Jet-A">Jet-A</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Gallons</Label>
-                    <Input
-                      type="number" step="0.1" min="0"
-                      value={form.gallons_requested}
-                      onChange={(e) => setForm({ ...form, gallons_requested: e.target.value })}
-                      placeholder="Tabs / Full / Amount"
-                    />
-                  </div>
+                <div className="space-y-2">
+                  <Label>Aircraft Type</Label>
+                  <AircraftTypeInput value={form.aircraft_type} onChange={(v) => setForm({ ...form, aircraft_type: v })} />
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <Switch checked={form.prist} onCheckedChange={(v) => setForm({ ...form, prist: v })} />
-                  <Label>Prist (Anti-Ice Additive)</Label>
-                </div>
+                {/* Fuel-specific fields */}
+                {isFuelService && (
+                  <div className="space-y-4 p-4 rounded-lg bg-secondary/30 border border-border/50">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div className="space-y-2">
+                        <Label>Fuel Type *</Label>
+                        <Select value={form.fuel_type} onValueChange={(v) => setForm({ ...form, fuel_type: v as any })}>
+                          <SelectTrigger><SelectValue placeholder="Fuel type" /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="100LL">100LL (Avgas)</SelectItem>
+                            <SelectItem value="Jet-A">Jet-A</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Gallons</Label>
+                        <Input
+                          type="number" step="0.1" min="0"
+                          value={form.gallons_requested}
+                          onChange={(e) => setForm({ ...form, gallons_requested: e.target.value })}
+                          placeholder="Top off / Amount"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Prist</Label>
+                        <div className="flex items-center gap-3 h-10 px-3 rounded-md border border-input bg-background">
+                          <Switch checked={form.prist} onCheckedChange={(v) => setForm({ ...form, prist: v })} />
+                          <span className={cn("text-sm", form.prist ? "text-foreground font-medium" : "text-muted-foreground")}>
+                            {form.prist ? "Yes" : "No"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
+                {/* Notes */}
                 <div className="space-y-2">
                   <Label>Notes</Label>
                   <Textarea
                     value={form.notes}
                     onChange={(e) => setForm({ ...form, notes: e.target.value })}
-                    placeholder="Special instructions, parking location, etc."
+                    placeholder={
+                      form.service_type === "catering" ? "Menu items, headcount, delivery time..."
+                        : form.service_type === "de_ice" ? "Aircraft location, type of treatment needed..."
+                        : form.service_type === "lav_service" ? "Aircraft location, any special instructions..."
+                        : "Special instructions, parking location, etc."
+                    }
                     rows={2}
                   />
                 </div>
@@ -253,7 +321,7 @@ const FuelTickets = () => {
               <Card className="border-border/50">
                 <CardContent className="py-12 text-center text-muted-foreground">
                   <ClipboardList className="w-10 h-10 mx-auto mb-3 opacity-40" />
-                  <p>No active fuel tickets</p>
+                  <p>No active tickets</p>
                   <p className="text-xs mt-1">Create a ticket from the lobby to send to the flight line</p>
                 </CardContent>
               </Card>
@@ -287,54 +355,65 @@ const TicketCard = ({
   ticket: FuelTicket;
   isDriver: boolean;
   onUpdate: (id: string, status: string) => void;
-}) => (
-  <Card className={cn("border-border/50 transition-all", ticket.status === "pending" && "border-l-4 border-l-amber-500")}>
-    <CardContent className="p-4">
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex-1 space-y-2">
-          <div className="flex items-center gap-2 flex-wrap">
-            <Badge variant="outline" className={statusColors[ticket.status]}>
-              {ticket.status.replace("_", " ")}
-            </Badge>
-            <Badge variant="outline" className={ticket.fuel_type === "100LL" ? "bg-blue-500/10 text-blue-400" : "bg-amber-500/10 text-amber-400"}>
-              {ticket.fuel_type}
-            </Badge>
-            {ticket.prist && <Badge variant="outline" className="bg-purple-500/10 text-purple-400">Prist</Badge>}
+}) => {
+  const svc = SERVICE_TYPES.find(s => s.value === ticket.service_type) ?? SERVICE_TYPES[0];
+  const customerDisplay = ticket.customers?.name ?? ticket.customer_name ?? null;
+
+  return (
+    <Card className={cn("border-border/50 transition-all", ticket.status === "pending" && "border-l-4 border-l-amber-500")}>
+      <CardContent className="p-4">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex-1 space-y-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <Badge variant="outline" className={statusColors[ticket.status]}>
+                {ticket.status.replace("_", " ")}
+              </Badge>
+              <Badge variant="outline" className={serviceColors[ticket.service_type] ?? serviceColors.other}>
+                <svc.icon className="w-3 h-3 mr-1" />
+                {svc.label}
+              </Badge>
+              {ticket.fuel_type && (
+                <Badge variant="outline" className={ticket.fuel_type === "100LL" ? "bg-blue-500/10 text-blue-400" : "bg-amber-500/10 text-amber-400"}>
+                  {ticket.fuel_type}
+                </Badge>
+              )}
+              {ticket.prist && <Badge variant="outline" className="bg-purple-500/10 text-purple-400">Prist</Badge>}
+            </div>
+
+            <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm">
+              {customerDisplay && <span><span className="text-muted-foreground">Customer:</span> {customerDisplay}</span>}
+              {ticket.aircraft_tail_number && <span><span className="text-muted-foreground">Tail:</span> {ticket.aircraft_tail_number}</span>}
+              {ticket.aircraft_type && <span><span className="text-muted-foreground">Type:</span> {ticket.aircraft_type}</span>}
+              {ticket.gallons_requested && <span><span className="text-muted-foreground">Gal:</span> {ticket.gallons_requested}</span>}
+            </div>
+
+            {ticket.notes && <p className="text-sm text-muted-foreground">{ticket.notes}</p>}
+            <p className="text-xs text-muted-foreground">{format(new Date(ticket.created_at), "MMM d, h:mm a")}</p>
           </div>
 
-          <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm">
-            {ticket.customers?.name && <span><span className="text-muted-foreground">Customer:</span> {ticket.customers.name}</span>}
-            {ticket.aircraft_tail_number && <span><span className="text-muted-foreground">Tail:</span> {ticket.aircraft_tail_number}</span>}
-            {ticket.aircraft_type && <span><span className="text-muted-foreground">Type:</span> {ticket.aircraft_type}</span>}
-            {ticket.gallons_requested && <span><span className="text-muted-foreground">Gal:</span> {ticket.gallons_requested}</span>}
-          </div>
-
-          {ticket.notes && <p className="text-sm text-muted-foreground">{ticket.notes}</p>}
-          <p className="text-xs text-muted-foreground">{format(new Date(ticket.created_at), "MMM d, h:mm a")}</p>
+          {isDriver && (
+            <div className="flex gap-1.5 shrink-0">
+              {ticket.status === "pending" && (
+                <Button size="sm" variant="outline" onClick={() => onUpdate(ticket.id, "in_progress")}>
+                  <Truck className="w-4 h-4 mr-1" /> Claim
+                </Button>
+              )}
+              {ticket.status === "in_progress" && (
+                <Button size="sm" onClick={() => onUpdate(ticket.id, "completed")}>
+                  <Check className="w-4 h-4 mr-1" /> Done
+                </Button>
+              )}
+              {(ticket.status === "pending" || ticket.status === "in_progress") && (
+                <Button size="sm" variant="ghost" onClick={() => onUpdate(ticket.id, "cancelled")}>
+                  <X className="w-4 h-4" />
+                </Button>
+              )}
+            </div>
+          )}
         </div>
-
-        {isDriver && (
-          <div className="flex gap-1.5 shrink-0">
-            {ticket.status === "pending" && (
-              <Button size="sm" variant="outline" onClick={() => onUpdate(ticket.id, "in_progress")}>
-                <Truck className="w-4 h-4 mr-1" /> Claim
-              </Button>
-            )}
-            {ticket.status === "in_progress" && (
-              <Button size="sm" onClick={() => onUpdate(ticket.id, "completed")}>
-                <Check className="w-4 h-4 mr-1" /> Done
-              </Button>
-            )}
-            {(ticket.status === "pending" || ticket.status === "in_progress") && (
-              <Button size="sm" variant="ghost" onClick={() => onUpdate(ticket.id, "cancelled")}>
-                <X className="w-4 h-4" />
-              </Button>
-            )}
-          </div>
-        )}
-      </div>
-    </CardContent>
-  </Card>
-);
+      </CardContent>
+    </Card>
+  );
+};
 
 export default FuelTickets;
