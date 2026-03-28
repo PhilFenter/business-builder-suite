@@ -348,32 +348,62 @@ const FuelTickets = () => {
         )}
 
         {/* Ticket Queue */}
-        <Tabs defaultValue="active">
+        <Tabs defaultValue="now">
           <TabsList>
-            <TabsTrigger value="active" className="gap-1">
-              Active
-              {activeTickets.length > 0 && (
-                <Badge variant="secondary" className="ml-1 text-xs">{activeTickets.length}</Badge>
+            <TabsTrigger value="now" className="gap-1">
+              <Clock className="w-3.5 h-3.5" />
+              Now
+              {nowTickets.length > 0 && (
+                <Badge variant="secondary" className="ml-1 text-xs">{nowTickets.length}</Badge>
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="scheduled" className="gap-1">
+              <Plane className="w-3.5 h-3.5" />
+              Scheduled
+              {scheduledTickets.length > 0 && (
+                <Badge variant="secondary" className="ml-1 text-xs">{scheduledTickets.length}</Badge>
               )}
             </TabsTrigger>
             <TabsTrigger value="completed">Completed</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="active" className="space-y-3 mt-4">
+          <TabsContent value="now" className="space-y-3 mt-4">
             {loading ? (
               <p className="text-muted-foreground text-sm">Loading...</p>
-            ) : activeTickets.length === 0 ? (
+            ) : nowTickets.length === 0 ? (
               <Card className="border-border/50">
                 <CardContent className="py-12 text-center text-muted-foreground">
                   <ClipboardList className="w-10 h-10 mx-auto mb-3 opacity-40" />
-                  <p>No active tickets</p>
-                  <p className="text-xs mt-1">Create a ticket from the lobby to send to the flight line</p>
+                  <p>No active tickets right now</p>
+                  <p className="text-xs mt-1">Check Scheduled for upcoming departures</p>
                 </CardContent>
               </Card>
             ) : (
-              activeTickets.map((ticket) => (
+              nowTickets.map((ticket) => (
                 <TicketCard key={ticket.id} ticket={ticket} isDriver={isDriver} onUpdate={updateStatus} />
               ))
+            )}
+          </TabsContent>
+
+          <TabsContent value="scheduled" className="space-y-3 mt-4">
+            {scheduledTickets.length === 0 ? (
+              <Card className="border-border/50">
+                <CardContent className="py-12 text-center text-muted-foreground">
+                  <Plane className="w-10 h-10 mx-auto mb-3 opacity-40" />
+                  <p>No scheduled departures</p>
+                  <p className="text-xs mt-1">Future-dated service requests will appear here sorted by date</p>
+                </CardContent>
+              </Card>
+            ) : (
+              <>
+                <div className="p-3 rounded-lg bg-secondary/50 border border-border/50 text-sm text-muted-foreground">
+                  <Plane className="w-4 h-4 inline mr-1.5 -mt-0.5" />
+                  Upcoming departures & scheduled services — review at shift start to prioritize fueling
+                </div>
+                {scheduledTickets.map((ticket) => (
+                  <TicketCard key={ticket.id} ticket={ticket} isDriver={isDriver} onUpdate={updateStatus} />
+                ))}
+              </>
             )}
           </TabsContent>
 
