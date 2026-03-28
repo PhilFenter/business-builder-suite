@@ -131,6 +131,7 @@ const FuelTickets = () => {
       fuel_type: isFuelService ? (form.fuel_type as "100LL" | "Jet-A") : null,
       prist: isFuelService ? form.prist : false,
       gallons_requested: form.gallons_requested ? parseFloat(form.gallons_requested) : null,
+      requested_date: form.requested_date ? format(form.requested_date, "yyyy-MM-dd") : null,
       notes: form.notes || null,
     });
 
