@@ -65,6 +65,7 @@ export type Database = {
           aircraft_type: string | null
           created_at: string
           customer_id: string
+          customer_name: string | null
           delivered_at: string
           driver_id: string
           fuel_type: Database["public"]["Enums"]["fuel_type"]
@@ -83,6 +84,7 @@ export type Database = {
           aircraft_type?: string | null
           created_at?: string
           customer_id: string
+          customer_name?: string | null
           delivered_at?: string
           driver_id: string
           fuel_type: Database["public"]["Enums"]["fuel_type"]
@@ -101,6 +103,7 @@ export type Database = {
           aircraft_type?: string | null
           created_at?: string
           customer_id?: string
+          customer_name?: string | null
           delivered_at?: string
           driver_id?: string
           fuel_type?: Database["public"]["Enums"]["fuel_type"]
@@ -133,12 +136,14 @@ export type Database = {
           created_at: string
           created_by: string
           customer_id: string | null
+          customer_name: string | null
           delivery_id: string | null
-          fuel_type: Database["public"]["Enums"]["fuel_type"]
+          fuel_type: Database["public"]["Enums"]["fuel_type"] | null
           gallons_requested: number | null
           id: string
           notes: string | null
           prist: boolean
+          service_type: string
           status: string
           updated_at: string
         }
@@ -150,12 +155,14 @@ export type Database = {
           created_at?: string
           created_by: string
           customer_id?: string | null
+          customer_name?: string | null
           delivery_id?: string | null
-          fuel_type: Database["public"]["Enums"]["fuel_type"]
+          fuel_type?: Database["public"]["Enums"]["fuel_type"] | null
           gallons_requested?: number | null
           id?: string
           notes?: string | null
           prist?: boolean
+          service_type?: string
           status?: string
           updated_at?: string
         }
@@ -167,12 +174,14 @@ export type Database = {
           created_at?: string
           created_by?: string
           customer_id?: string | null
+          customer_name?: string | null
           delivery_id?: string | null
-          fuel_type?: Database["public"]["Enums"]["fuel_type"]
+          fuel_type?: Database["public"]["Enums"]["fuel_type"] | null
           gallons_requested?: number | null
           id?: string
           notes?: string | null
           prist?: boolean
+          service_type?: string
           status?: string
           updated_at?: string
         }

@@ -12,8 +12,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Fuel, Check, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
-import type { Tables } from "@/integrations/supabase/types";
 import AircraftTypeInput from "@/components/fuelops/AircraftTypeInput";
+import CustomerInput from "@/components/fuelops/CustomerInput";
+
+import type { Tables } from "@/integrations/supabase/types";
 
 const FuelLog = () => {
   const { user } = useAuth();
@@ -24,6 +26,7 @@ const FuelLog = () => {
 
   const [form, setForm] = useState({
     customer_id: "",
+    customer_name: "",
     fuel_type: "" as "100LL" | "Jet-A" | "",
     gallons: "",
     price_per_gallon: "",
@@ -64,7 +67,8 @@ const FuelLog = () => {
     setSubmitting(true);
     const { error } = await supabase.from("fuel_deliveries").insert({
       driver_id: user.id,
-      customer_id: form.customer_id,
+      customer_id: form.customer_id || null,
+      customer_name: form.customer_name || null,
       fuel_type: form.fuel_type as "100LL" | "Jet-A",
       gallons: parseFloat(form.gallons),
       price_per_gallon: parseFloat(form.price_per_gallon),
@@ -87,7 +91,7 @@ const FuelLog = () => {
       toast({ title: "Delivery Logged", description: `${form.gallons} gal ${form.fuel_type}${form.prist ? " +Prist" : ""} — $${totalAmount}` });
       setTimeout(() => {
         setSuccess(false);
-        setForm({ customer_id: "", fuel_type: "", gallons: "", price_per_gallon: "", aircraft_tail_number: "", aircraft_type: "", prist: false, meter_start: "", meter_stop: "", truck_id: "", notes: "" });
+        setForm({ customer_id: "", customer_name: "", fuel_type: "", gallons: "", price_per_gallon: "", aircraft_tail_number: "", aircraft_type: "", prist: false, meter_start: "", meter_stop: "", truck_id: "", notes: "" });
       }, 2000);
     }
   };
@@ -111,17 +115,15 @@ const FuelLog = () => {
             <form onSubmit={handleSubmit} className="space-y-5">
               {/* Customer */}
               <div className="space-y-2">
-                <Label>Customer *</Label>
-                <Select value={form.customer_id} onValueChange={(v) => setForm({ ...form, customer_id: v })}>
-                  <SelectTrigger><SelectValue placeholder="Select customer" /></SelectTrigger>
-                  <SelectContent>
-                    {customers.map((c) => (
-                      <SelectItem key={c.id} value={c.id}>
-                        {c.name} {c.account_number ? `(${c.account_number})` : ""}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Label>Customer / Pilot Name</Label>
+                <CustomerInput
+                  customers={customers}
+                  selectedId={form.customer_id}
+                  customName={form.customer_name}
+                  onSelectAccount={(id) => setForm({ ...form, customer_id: id })}
+                  onTypeCustom={(name) => setForm({ ...form, customer_name: name })}
+                />
+                <p className="text-xs text-muted-foreground">Type a name for transients or select a house account</p>
               </div>
 
               {/* Aircraft Info Row */}
