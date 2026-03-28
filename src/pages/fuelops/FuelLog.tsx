@@ -67,7 +67,8 @@ const FuelLog = () => {
     setSubmitting(true);
     const { error } = await supabase.from("fuel_deliveries").insert({
       driver_id: user.id,
-      customer_id: form.customer_id,
+      customer_id: form.customer_id || null,
+      customer_name: form.customer_name || null,
       fuel_type: form.fuel_type as "100LL" | "Jet-A",
       gallons: parseFloat(form.gallons),
       price_per_gallon: parseFloat(form.price_per_gallon),
