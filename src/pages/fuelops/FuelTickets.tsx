@@ -84,6 +84,7 @@ const FuelTickets = () => {
     prist: false,
     gallons_requested: "",
     requested_date: new Date() as Date | undefined,
+    requested_time: "",
     notes: "",
   };
   const [form, setForm] = useState(defaultForm);
