@@ -439,7 +439,7 @@ const FuelTickets = () => {
               <p className="text-muted-foreground text-sm text-center py-8">No completed tickets yet</p>
             ) : (
               completedTickets.slice(0, 20).map((ticket) => (
-                <TicketCard key={ticket.id} ticket={ticket} isDriver={isDriver} onUpdate={updateStatus} />
+                <TicketCard key={ticket.id} ticket={ticket} isDriver={isDriver} onUpdate={updateStatus} onComplete={handleComplete} />
               ))
             )}
           </TabsContent>
