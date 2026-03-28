@@ -155,7 +155,18 @@ const FuelTickets = () => {
     if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
   };
 
-  const activeTickets = tickets.filter(t => t.status === "pending" || t.status === "in_progress");
+  const today = format(new Date(), "yyyy-MM-dd");
+
+  // Now: no future date, or date is today
+  const nowTickets = activeTickets.filter(t =>
+    !t.requested_date || t.requested_date <= today
+  );
+
+  // Scheduled: future-dated tickets, sorted earliest first
+  const scheduledTickets = activeTickets.filter(t =>
+    t.requested_date && t.requested_date > today
+  ).sort((a, b) => (a.requested_date! > b.requested_date! ? 1 : -1));
+
   const completedTickets = tickets.filter(t => t.status === "completed" || t.status === "cancelled");
 
   const isDriver = hasRole("driver") || hasRole("admin");
