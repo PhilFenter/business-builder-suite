@@ -22,7 +22,7 @@ const statusConfig = {
 const Billing = () => {
   const { toast } = useToast();
   const [invoices, setInvoices] = useState<InvoiceWithCustomer[]>([]);
-  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState("all");
   const [loading, setLoading] = useState(true);
 
   const [summaryStats, setSummaryStats] = useState({ outstanding: 0, paid: 0, overdue: 0 });
