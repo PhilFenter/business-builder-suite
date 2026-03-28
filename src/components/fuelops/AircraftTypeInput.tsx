@@ -21,7 +21,8 @@ const COMMON_AIRCRAFT = [
   // Daher
   "TBM 850", "TBM 900", "TBM 910", "TBM 930", "TBM 960",
   // Pilatus
-  "PC-12", "PC-24",
+  "PC-6", "PC-7", "PC-9", "PC-12", "PC-12/45", "PC-12/47", "PC-12/47E", "PC-12 NGX",
+  "PC-21", "PC-24",
   // Embraer
   "Phenom 100", "Phenom 300", "Praetor 500", "Praetor 600",
   // Learjet
@@ -41,10 +42,21 @@ const COMMON_AIRCRAFT = [
   "Falcon 50", "Falcon 900", "Falcon 900EX", "Falcon 900LX",
   "Falcon 2000", "Falcon 2000EX", "Falcon 2000LXS",
   "Falcon 7X", "Falcon 8X", "Falcon 6X", "Falcon 10X",
-  // Helicopters
-  "R22", "R44", "R66", "Bell 206", "Bell 407", "Bell 412", "Bell 429",
+  // Robinson Helicopters
+  "R22", "R22 Beta II", "R44 Raven", "R44 Raven II", "R44 Cadet", "R66 Turbine",
+  // Bell Helicopters
+  "Bell 47", "Bell 204", "Bell 205", "Bell 206 JetRanger", "Bell 206L LongRanger",
+  "Bell 212", "Bell 214", "Bell 222", "Bell 230",
+  "Bell 407", "Bell 407GXi", "Bell 412", "Bell 412EP", "Bell 412EPI",
+  "Bell 429", "Bell 430", "Bell 505", "Bell 525",
+  // Sikorsky
+  "S-55", "S-58", "S-61", "S-64 Skycrane", "S-70 (Black Hawk)", "S-76", "S-76B", "S-76C", "S-76D",
+  "S-92",
+  // Boeing Rotorcraft
+  "Boeing 107 (CH-46)", "Boeing 234 (CH-47 Chinook)",
+  // Other Helicopters
   "EC130", "EC135", "EC145", "AS350", "H125", "H130", "H145", "H160",
-  "S-76", "AW109", "AW139",
+  "AW109", "AW139", "AW169", "AW189",
 ];
 
 interface AircraftTypeInputProps {
