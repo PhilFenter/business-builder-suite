@@ -11,7 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ClipboardList, Plus, Truck, Check, X, Loader2, RefreshCw, Fuel, Droplets, UtensilsCrossed, Snowflake, CalendarIcon } from "lucide-react";
+import { ClipboardList, Plus, Truck, Check, X, Loader2, RefreshCw, Fuel, Droplets, UtensilsCrossed, Snowflake, CalendarIcon, Clock, Plane } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
@@ -156,6 +156,18 @@ const FuelTickets = () => {
   };
 
   const activeTickets = tickets.filter(t => t.status === "pending" || t.status === "in_progress");
+  const today = format(new Date(), "yyyy-MM-dd");
+
+  // Now: no future date, or date is today
+  const nowTickets = activeTickets.filter(t =>
+    !t.requested_date || t.requested_date <= today
+  );
+
+  // Scheduled: future-dated tickets, sorted earliest first
+  const scheduledTickets = activeTickets.filter(t =>
+    t.requested_date && t.requested_date > today
+  ).sort((a, b) => (a.requested_date! > b.requested_date! ? 1 : -1));
+
   const completedTickets = tickets.filter(t => t.status === "completed" || t.status === "cancelled");
 
   const isDriver = hasRole("driver") || hasRole("admin");
@@ -337,32 +349,62 @@ const FuelTickets = () => {
         )}
 
         {/* Ticket Queue */}
-        <Tabs defaultValue="active">
+        <Tabs defaultValue="now">
           <TabsList>
-            <TabsTrigger value="active" className="gap-1">
-              Active
-              {activeTickets.length > 0 && (
-                <Badge variant="secondary" className="ml-1 text-xs">{activeTickets.length}</Badge>
+            <TabsTrigger value="now" className="gap-1">
+              <Clock className="w-3.5 h-3.5" />
+              Now
+              {nowTickets.length > 0 && (
+                <Badge variant="secondary" className="ml-1 text-xs">{nowTickets.length}</Badge>
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="scheduled" className="gap-1">
+              <Plane className="w-3.5 h-3.5" />
+              Scheduled
+              {scheduledTickets.length > 0 && (
+                <Badge variant="secondary" className="ml-1 text-xs">{scheduledTickets.length}</Badge>
               )}
             </TabsTrigger>
             <TabsTrigger value="completed">Completed</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="active" className="space-y-3 mt-4">
+          <TabsContent value="now" className="space-y-3 mt-4">
             {loading ? (
               <p className="text-muted-foreground text-sm">Loading...</p>
-            ) : activeTickets.length === 0 ? (
+            ) : nowTickets.length === 0 ? (
               <Card className="border-border/50">
                 <CardContent className="py-12 text-center text-muted-foreground">
                   <ClipboardList className="w-10 h-10 mx-auto mb-3 opacity-40" />
-                  <p>No active tickets</p>
-                  <p className="text-xs mt-1">Create a ticket from the lobby to send to the flight line</p>
+                  <p>No active tickets right now</p>
+                  <p className="text-xs mt-1">Check Scheduled for upcoming departures</p>
                 </CardContent>
               </Card>
             ) : (
-              activeTickets.map((ticket) => (
+              nowTickets.map((ticket) => (
                 <TicketCard key={ticket.id} ticket={ticket} isDriver={isDriver} onUpdate={updateStatus} />
               ))
+            )}
+          </TabsContent>
+
+          <TabsContent value="scheduled" className="space-y-3 mt-4">
+            {scheduledTickets.length === 0 ? (
+              <Card className="border-border/50">
+                <CardContent className="py-12 text-center text-muted-foreground">
+                  <Plane className="w-10 h-10 mx-auto mb-3 opacity-40" />
+                  <p>No scheduled departures</p>
+                  <p className="text-xs mt-1">Future-dated service requests will appear here sorted by date</p>
+                </CardContent>
+              </Card>
+            ) : (
+              <>
+                <div className="p-3 rounded-lg bg-secondary/50 border border-border/50 text-sm text-muted-foreground">
+                  <Plane className="w-4 h-4 inline mr-1.5 -mt-0.5" />
+                  Upcoming departures & scheduled services — review at shift start to prioritize fueling
+                </div>
+                {scheduledTickets.map((ticket) => (
+                  <TicketCard key={ticket.id} ticket={ticket} isDriver={isDriver} onUpdate={updateStatus} />
+                ))}
+              </>
             )}
           </TabsContent>
 
