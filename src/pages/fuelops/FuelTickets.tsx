@@ -68,6 +68,7 @@ const statusColors: Record<string, string> = {
 
 const FuelTickets = () => {
   const { user, hasRole } = useAuth();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [tickets, setTickets] = useState<FuelTicket[]>([]);
   const [customers, setCustomers] = useState<Tables<"customers">[]>([]);
