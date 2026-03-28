@@ -155,6 +155,7 @@ const FuelTickets = () => {
     if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
   };
 
+  const activeTickets = tickets.filter(t => t.status === "pending" || t.status === "in_progress");
   const today = format(new Date(), "yyyy-MM-dd");
 
   // Now: no future date, or date is today
