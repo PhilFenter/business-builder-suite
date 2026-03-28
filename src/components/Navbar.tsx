@@ -48,8 +48,8 @@ const Navbar = () => {
         </div>
 
         <div className="hidden lg:flex items-center gap-3">
-          <Button variant="ghost" size="sm" className="text-muted-foreground">
-            Log In
+          <Button variant="ghost" size="sm" className="text-muted-foreground" asChild>
+            <Link to="/fuelops/login">Log In</Link>
           </Button>
           <Button variant="default" size="sm">
             Request Quote
@@ -83,7 +83,7 @@ const Navbar = () => {
               </Link>
             ))}
             <div className="flex gap-3 pt-2 border-t border-border">
-              <Button variant="ghost" size="sm" className="text-muted-foreground">Log In</Button>
+              <Button variant="ghost" size="sm" className="text-muted-foreground" asChild><Link to="/fuelops/login">Log In</Link></Button>
               <Button variant="default" size="sm">Request Quote</Button>
             </div>
           </div>

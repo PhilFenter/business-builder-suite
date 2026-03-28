@@ -14,16 +14,266 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      customers: {
+        Row: {
+          account_number: string | null
+          address: string | null
+          billing_cycle: Database["public"]["Enums"]["billing_cycle"]
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string
+          discount_percent: number
+          id: string
+          is_active: boolean
+          name: string
+          notes: string | null
+          updated_at: string
+        }
+        Insert: {
+          account_number?: string | null
+          address?: string | null
+          billing_cycle?: Database["public"]["Enums"]["billing_cycle"]
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          discount_percent?: number
+          id?: string
+          is_active?: boolean
+          name: string
+          notes?: string | null
+          updated_at?: string
+        }
+        Update: {
+          account_number?: string | null
+          address?: string | null
+          billing_cycle?: Database["public"]["Enums"]["billing_cycle"]
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          discount_percent?: number
+          id?: string
+          is_active?: boolean
+          name?: string
+          notes?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      fuel_deliveries: {
+        Row: {
+          aircraft_tail_number: string | null
+          created_at: string
+          customer_id: string
+          delivered_at: string
+          driver_id: string
+          fuel_type: Database["public"]["Enums"]["fuel_type"]
+          gallons: number
+          id: string
+          notes: string | null
+          price_per_gallon: number
+          total_amount: number
+          truck_id: string | null
+        }
+        Insert: {
+          aircraft_tail_number?: string | null
+          created_at?: string
+          customer_id: string
+          delivered_at?: string
+          driver_id: string
+          fuel_type: Database["public"]["Enums"]["fuel_type"]
+          gallons: number
+          id?: string
+          notes?: string | null
+          price_per_gallon: number
+          total_amount: number
+          truck_id?: string | null
+        }
+        Update: {
+          aircraft_tail_number?: string | null
+          created_at?: string
+          customer_id?: string
+          delivered_at?: string
+          driver_id?: string
+          fuel_type?: Database["public"]["Enums"]["fuel_type"]
+          gallons?: number
+          id?: string
+          notes?: string | null
+          price_per_gallon?: number
+          total_amount?: number
+          truck_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fuel_deliveries_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoice_items: {
+        Row: {
+          created_at: string
+          delivery_id: string | null
+          description: string
+          id: string
+          invoice_id: string
+          quantity: number
+          total: number
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string
+          delivery_id?: string | null
+          description: string
+          id?: string
+          invoice_id: string
+          quantity: number
+          total: number
+          unit_price: number
+        }
+        Update: {
+          created_at?: string
+          delivery_id?: string | null
+          description?: string
+          id?: string
+          invoice_id?: string
+          quantity?: number
+          total?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_items_delivery_id_fkey"
+            columns: ["delivery_id"]
+            isOneToOne: false
+            referencedRelation: "fuel_deliveries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_items_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoices: {
+        Row: {
+          created_at: string
+          customer_id: string
+          due_date: string
+          id: string
+          invoice_number: string
+          paid_at: string | null
+          period_end: string
+          period_start: string
+          status: Database["public"]["Enums"]["invoice_status"]
+          total_amount: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          customer_id: string
+          due_date: string
+          id?: string
+          invoice_number: string
+          paid_at?: string | null
+          period_end: string
+          period_start: string
+          status?: Database["public"]["Enums"]["invoice_status"]
+          total_amount?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string
+          due_date?: string
+          id?: string
+          invoice_number?: string
+          paid_at?: string | null
+          period_end?: string
+          period_start?: string
+          status?: Database["public"]["Enums"]["invoice_status"]
+          total_amount?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          full_name: string
+          id: string
+          phone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          full_name?: string
+          id?: string
+          phone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          full_name?: string
+          id?: string
+          phone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_any_fuelops_role: { Args: { _user_id: string }; Returns: boolean }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "driver" | "billing_clerk"
+      billing_cycle: "per_delivery" | "monthly"
+      fuel_type: "100LL" | "Jet-A"
+      invoice_status: "draft" | "sent" | "paid" | "overdue"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +400,11 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "driver", "billing_clerk"],
+      billing_cycle: ["per_delivery", "monthly"],
+      fuel_type: ["100LL", "Jet-A"],
+      invoice_status: ["draft", "sent", "paid", "overdue"],
+    },
   },
 } as const
