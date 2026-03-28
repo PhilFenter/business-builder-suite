@@ -114,7 +114,10 @@ const FuelLog = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user || !form.customer_id || !form.fuel_type || !form.gallons || !form.price_per_gallon) return;
+    if (!user || (!form.customer_id && !form.customer_name) || !form.fuel_type || !form.gallons || !form.price_per_gallon) {
+      toast({ title: "Missing fields", description: "Please fill in all required fields (customer, fuel type, gallons, price).", variant: "destructive" });
+      return;
+    }
 
     setSubmitting(true);
 
