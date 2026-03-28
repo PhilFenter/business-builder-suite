@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Plane, Menu, X } from "lucide-react";
-import { Link } from "react-router-dom";
-import { NavLink } from "@/components/NavLink";
+import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const location = useLocation();
 
   const navItems = [
     { to: "/", label: "Home" },
@@ -31,7 +32,18 @@ const Navbar = () => {
 
         <div className="hidden lg:flex items-center gap-8">
           {navItems.map((item) => (
-            <NavLink key={item.to} to={item.to}>{item.label}</NavLink>
+            <Link
+              key={item.to}
+              to={item.to}
+              className={cn(
+                "text-sm transition-colors",
+                location.pathname === item.to
+                  ? "text-primary font-semibold"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {item.label}
+            </Link>
           ))}
         </div>
 
@@ -56,9 +68,19 @@ const Navbar = () => {
         <div className="lg:hidden border-t border-border bg-background/95 backdrop-blur-xl">
           <div className="container mx-auto px-6 py-4 flex flex-col gap-4">
             {navItems.map((item) => (
-              <NavLink key={item.to} to={item.to}>
-                <span onClick={() => setMobileOpen(false)}>{item.label}</span>
-              </NavLink>
+              <Link
+                key={item.to}
+                to={item.to}
+                onClick={() => setMobileOpen(false)}
+                className={cn(
+                  "text-sm transition-colors",
+                  location.pathname === item.to
+                    ? "text-primary font-semibold"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                {item.label}
+              </Link>
             ))}
             <div className="flex gap-3 pt-2 border-t border-border">
               <Button variant="ghost" size="sm" className="text-muted-foreground">Log In</Button>
