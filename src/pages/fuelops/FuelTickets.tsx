@@ -12,7 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ClipboardList, Plus, Truck, Check, X, Loader2, RefreshCw, Fuel, Droplets, UtensilsCrossed, Snowflake, CalendarIcon, Clock, Plane } from "lucide-react";
+import { ClipboardList, Plus, Truck, Check, X, Loader2, RefreshCw, Fuel, Droplets, UtensilsCrossed, Snowflake, CalendarIcon, Clock, Plane, Phone, Mail, MessageSquare } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
@@ -56,6 +56,8 @@ interface FuelTicket {
   created_at: string;
   requested_date: string | null;
   requested_time: string | null;
+  pilot_phone: string | null;
+  pilot_email: string | null;
   customers: { name: string } | null;
 }
 
@@ -88,6 +90,8 @@ const FuelTickets = () => {
     gallons_requested: "",
     requested_date: new Date() as Date | undefined,
     requested_time: "",
+    pilot_phone: "",
+    pilot_email: "",
     notes: "",
   };
   const [form, setForm] = useState(defaultForm);
@@ -138,6 +142,8 @@ const FuelTickets = () => {
       gallons_requested: form.gallons_requested ? parseFloat(form.gallons_requested) : null,
       requested_date: form.requested_date ? format(form.requested_date, "yyyy-MM-dd") : null,
       requested_time: form.requested_time || null,
+      pilot_phone: form.pilot_phone || null,
+      pilot_email: form.pilot_email || null,
       notes: form.notes || null,
     });
 
@@ -345,6 +351,28 @@ const FuelTickets = () => {
                     </div>
                   </div>
                 )}
+
+                {/* Pilot Contact Info */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Pilot Phone</Label>
+                    <Input
+                      type="tel"
+                      value={form.pilot_phone}
+                      onChange={(e) => setForm({ ...form, pilot_phone: e.target.value })}
+                      placeholder="(555) 123-4567"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Pilot Email</Label>
+                    <Input
+                      type="email"
+                      value={form.pilot_email}
+                      onChange={(e) => setForm({ ...form, pilot_email: e.target.value })}
+                      placeholder="pilot@example.com"
+                    />
+                  </div>
+                </div>
 
                 {/* Notes */}
                 <div className="space-y-2">
@@ -571,6 +599,35 @@ const TicketCard = ({
                 </div>
               )}
             </div>
+            {/* Pilot Contact */}
+            {(ticket.pilot_phone || ticket.pilot_email) && (
+              <div className="flex flex-wrap gap-2 pt-1">
+                {ticket.pilot_phone && (
+                  <>
+                    <Button size="sm" variant="outline" asChild onClick={(e) => e.stopPropagation()}>
+                      <a href={`tel:${ticket.pilot_phone}`}>
+                        <Phone className="w-3.5 h-3.5 mr-1" /> Call
+                      </a>
+                    </Button>
+                    <Button size="sm" variant="outline" asChild onClick={(e) => e.stopPropagation()}>
+                      <a href={`sms:${ticket.pilot_phone}`}>
+                        <MessageSquare className="w-3.5 h-3.5 mr-1" /> Text
+                      </a>
+                    </Button>
+                  </>
+                )}
+                {ticket.pilot_email && (
+                  <Button size="sm" variant="outline" asChild onClick={(e) => e.stopPropagation()}>
+                    <a href={`mailto:${ticket.pilot_email}`}>
+                      <Mail className="w-3.5 h-3.5 mr-1" /> Email
+                    </a>
+                  </Button>
+                )}
+                <span className="text-xs text-muted-foreground self-center">
+                  {ticket.pilot_phone}{ticket.pilot_phone && ticket.pilot_email ? " · " : ""}{ticket.pilot_email}
+                </span>
+              </div>
+            )}
             {ticket.notes && (
               <div className="text-sm">
                 <span className="text-muted-foreground text-xs block">Notes</span>
