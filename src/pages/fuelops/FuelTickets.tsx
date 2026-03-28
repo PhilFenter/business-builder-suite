@@ -514,7 +514,7 @@ const TicketCard = ({
                 </Button>
               )}
               {ticket.status === "in_progress" && (
-                <Button size="sm" onClick={() => onUpdate(ticket.id, "completed")}>
+                <Button size="sm" onClick={() => onComplete(ticket)}>
                   <Check className="w-4 h-4 mr-1" /> Done
                 </Button>
               )}
