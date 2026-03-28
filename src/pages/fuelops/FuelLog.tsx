@@ -115,17 +115,15 @@ const FuelLog = () => {
             <form onSubmit={handleSubmit} className="space-y-5">
               {/* Customer */}
               <div className="space-y-2">
-                <Label>Customer *</Label>
-                <Select value={form.customer_id} onValueChange={(v) => setForm({ ...form, customer_id: v })}>
-                  <SelectTrigger><SelectValue placeholder="Select customer" /></SelectTrigger>
-                  <SelectContent>
-                    {customers.map((c) => (
-                      <SelectItem key={c.id} value={c.id}>
-                        {c.name} {c.account_number ? `(${c.account_number})` : ""}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Label>Customer / Pilot Name</Label>
+                <CustomerInput
+                  customers={customers}
+                  selectedId={form.customer_id}
+                  customName={form.customer_name}
+                  onSelectAccount={(id) => setForm({ ...form, customer_id: id })}
+                  onTypeCustom={(name) => setForm({ ...form, customer_name: name })}
+                />
+                <p className="text-xs text-muted-foreground">Type a name for transients or select a house account</p>
               </div>
 
               {/* Aircraft Info Row */}
