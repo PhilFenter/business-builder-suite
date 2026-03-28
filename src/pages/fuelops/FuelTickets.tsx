@@ -12,7 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ClipboardList, Plus, Truck, Check, X, Loader2, RefreshCw, Fuel, Droplets, UtensilsCrossed, Snowflake, CalendarIcon, Clock, Plane } from "lucide-react";
+import { ClipboardList, Plus, Truck, Check, X, Loader2, RefreshCw, Fuel, Droplets, UtensilsCrossed, Snowflake, CalendarIcon, Clock, Plane, Phone, Mail, MessageSquare } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
