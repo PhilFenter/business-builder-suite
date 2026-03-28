@@ -1,0 +1,1 @@
+ALTER TABLE public.fuel_tickets ADD COLUMN pilot_phone text, ADD COLUMN pilot_email text;

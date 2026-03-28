@@ -142,6 +142,8 @@ export type Database = {
           gallons_requested: number | null
           id: string
           notes: string | null
+          pilot_email: string | null
+          pilot_phone: string | null
           prist: boolean
           requested_date: string | null
           requested_time: string | null
@@ -163,6 +165,8 @@ export type Database = {
           gallons_requested?: number | null
           id?: string
           notes?: string | null
+          pilot_email?: string | null
+          pilot_phone?: string | null
           prist?: boolean
           requested_date?: string | null
           requested_time?: string | null
@@ -184,6 +188,8 @@ export type Database = {
           gallons_requested?: number | null
           id?: string
           notes?: string | null
+          pilot_email?: string | null
+          pilot_phone?: string | null
           prist?: boolean
           requested_date?: string | null
           requested_time?: string | null
