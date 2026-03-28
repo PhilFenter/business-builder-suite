@@ -27,8 +27,8 @@ const About = () => {
 
       {/* Hero */}
       <section className="relative pt-16">
-        <div className="relative h-[50vh] min-h-[400px] overflow-hidden">
-          <img src={helicopterImage} alt="Hillcrest Aircraft helicopter in front of hangar" className="w-full h-full object-cover object-[center_25%]" width={1920} height={800} />
+        <div className="relative h-[60vh] min-h-[500px] overflow-hidden">
+          <img src={helicopterImage} alt="Hillcrest Aircraft helicopter in front of hangar" className="w-full h-full object-cover object-[center_30%]" width={1920} height={800} />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-6 lg:p-12">
             <div className="container mx-auto">
