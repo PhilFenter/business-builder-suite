@@ -82,6 +82,7 @@ const FuelTickets = () => {
     fuel_type: "" as "100LL" | "Jet-A" | "",
     prist: false,
     gallons_requested: "",
+    requested_date: new Date() as Date | undefined,
     notes: "",
   };
   const [form, setForm] = useState(defaultForm);
