@@ -447,52 +447,56 @@ const TicketCard = ({
   isDriver: boolean;
   onUpdate: (id: string, status: string) => void;
 }) => {
+  const [expanded, setExpanded] = useState(ticket.status === "in_progress");
   const svc = SERVICE_TYPES.find(s => s.value === ticket.service_type) ?? SERVICE_TYPES[0];
   const customerDisplay = ticket.customers?.name ?? ticket.customer_name ?? null;
 
+  const handleClaim = () => {
+    onUpdate(ticket.id, "in_progress");
+    setExpanded(true);
+  };
+
   return (
-    <Card className={cn("border-border/50 transition-all", ticket.status === "pending" && "border-l-4 border-l-amber-500")}>
+    <Card
+      className={cn(
+        "border-border/50 transition-all cursor-pointer",
+        ticket.status === "pending" && "border-l-4 border-l-amber-500",
+        ticket.status === "in_progress" && "border-l-4 border-l-blue-500",
+      )}
+      onClick={() => setExpanded(!expanded)}
+    >
       <CardContent className="p-4">
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex-1 space-y-2">
-            <div className="flex items-center gap-2 flex-wrap">
-              <Badge variant="outline" className={statusColors[ticket.status]}>
-                {ticket.status.replace("_", " ")}
+        {/* Summary row — always visible */}
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2 flex-wrap flex-1 min-w-0">
+            <Badge variant="outline" className={statusColors[ticket.status]}>
+              {ticket.status.replace("_", " ")}
+            </Badge>
+            <Badge variant="outline" className={serviceColors[ticket.service_type] ?? serviceColors.other}>
+              <svc.icon className="w-3 h-3 mr-1" />
+              {svc.label}
+            </Badge>
+            {ticket.fuel_type && (
+              <Badge variant="outline" className={ticket.fuel_type === "100LL" ? "bg-blue-500/10 text-blue-400" : "bg-amber-500/10 text-amber-400"}>
+                {ticket.fuel_type}
               </Badge>
-              <Badge variant="outline" className={serviceColors[ticket.service_type] ?? serviceColors.other}>
-                <svc.icon className="w-3 h-3 mr-1" />
-                {svc.label}
-              </Badge>
-              {ticket.fuel_type && (
-                <Badge variant="outline" className={ticket.fuel_type === "100LL" ? "bg-blue-500/10 text-blue-400" : "bg-amber-500/10 text-amber-400"}>
-                  {ticket.fuel_type}
-                </Badge>
-              )}
-              {ticket.prist && <Badge variant="outline" className="bg-purple-500/10 text-purple-400">Prist</Badge>}
-            </div>
-
-            <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm">
-              {customerDisplay && <span><span className="text-muted-foreground">Customer:</span> {customerDisplay}</span>}
-              {ticket.aircraft_tail_number && <span><span className="text-muted-foreground">Tail:</span> {ticket.aircraft_tail_number}</span>}
-              {ticket.aircraft_type && <span><span className="text-muted-foreground">Type:</span> {ticket.aircraft_type}</span>}
-              {ticket.gallons_requested && <span><span className="text-muted-foreground">Gal:</span> {ticket.gallons_requested}</span>}
-              {ticket.requested_date && (
-                <span>
-                  <span className="text-muted-foreground">Date:</span>{" "}
-                  {format(new Date(ticket.requested_date + "T00:00:00"), "MMM d, yyyy")}
-                  {ticket.requested_time && ` @ ${ticket.requested_time.slice(0, 5)}`}
-                </span>
-              )}
-            </div>
-
-            {ticket.notes && <p className="text-sm text-muted-foreground">{ticket.notes}</p>}
-            <p className="text-xs text-muted-foreground">{format(new Date(ticket.created_at), "MMM d, h:mm a")}</p>
+            )}
+            {ticket.prist && <Badge variant="outline" className="bg-purple-500/10 text-purple-400">Prist</Badge>}
+            {!expanded && ticket.aircraft_tail_number && (
+              <span className="text-sm text-muted-foreground truncate">{ticket.aircraft_tail_number}</span>
+            )}
+            {!expanded && ticket.aircraft_type && (
+              <span className="text-sm text-muted-foreground truncate">{ticket.aircraft_type}</span>
+            )}
+            {!expanded && ticket.gallons_requested && (
+              <span className="text-sm text-muted-foreground">{ticket.gallons_requested} Gal</span>
+            )}
           </div>
 
           {isDriver && (
-            <div className="flex gap-1.5 shrink-0">
+            <div className="flex gap-1.5 shrink-0" onClick={(e) => e.stopPropagation()}>
               {ticket.status === "pending" && (
-                <Button size="sm" variant="outline" onClick={() => onUpdate(ticket.id, "in_progress")}>
+                <Button size="sm" variant="outline" onClick={handleClaim}>
                   <Truck className="w-4 h-4 mr-1" /> Claim
                 </Button>
               )}
@@ -509,6 +513,60 @@ const TicketCard = ({
             </div>
           )}
         </div>
+
+        {/* Expanded details */}
+        {expanded && (
+          <div className="mt-3 pt-3 border-t border-border/50 space-y-2">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-2 text-sm">
+              {customerDisplay && (
+                <div>
+                  <span className="text-muted-foreground text-xs block">Customer</span>
+                  <span className="font-medium">{customerDisplay}</span>
+                </div>
+              )}
+              {ticket.aircraft_tail_number && (
+                <div>
+                  <span className="text-muted-foreground text-xs block">Tail #</span>
+                  <span className="font-medium">{ticket.aircraft_tail_number}</span>
+                </div>
+              )}
+              {ticket.aircraft_type && (
+                <div>
+                  <span className="text-muted-foreground text-xs block">Aircraft</span>
+                  <span className="font-medium">{ticket.aircraft_type}</span>
+                </div>
+              )}
+              {ticket.fuel_type && (
+                <div>
+                  <span className="text-muted-foreground text-xs block">Fuel Type</span>
+                  <span className="font-medium">{ticket.fuel_type}{ticket.prist ? " + Prist" : ""}</span>
+                </div>
+              )}
+              {ticket.gallons_requested && (
+                <div>
+                  <span className="text-muted-foreground text-xs block">Gallons</span>
+                  <span className="font-medium">{ticket.gallons_requested}</span>
+                </div>
+              )}
+              {ticket.requested_date && (
+                <div>
+                  <span className="text-muted-foreground text-xs block">Scheduled</span>
+                  <span className="font-medium">
+                    {format(new Date(ticket.requested_date + "T00:00:00"), "MMM d, yyyy")}
+                    {ticket.requested_time && ` @ ${ticket.requested_time.slice(0, 5)}`}
+                  </span>
+                </div>
+              )}
+            </div>
+            {ticket.notes && (
+              <div className="text-sm">
+                <span className="text-muted-foreground text-xs block">Notes</span>
+                <p>{ticket.notes}</p>
+              </div>
+            )}
+            <p className="text-xs text-muted-foreground">Created {format(new Date(ticket.created_at), "MMM d, h:mm a")}</p>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
