@@ -142,6 +142,8 @@ const FuelTickets = () => {
       gallons_requested: form.gallons_requested ? parseFloat(form.gallons_requested) : null,
       requested_date: form.requested_date ? format(form.requested_date, "yyyy-MM-dd") : null,
       requested_time: form.requested_time || null,
+      pilot_phone: form.pilot_phone || null,
+      pilot_email: form.pilot_email || null,
       notes: form.notes || null,
     });
 
