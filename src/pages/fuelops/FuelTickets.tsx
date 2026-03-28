@@ -11,13 +11,15 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ClipboardList, Plus, Truck, Check, X, Loader2, RefreshCw, Fuel, Droplets, UtensilsCrossed, Snowflake } from "lucide-react";
+import { ClipboardList, Plus, Truck, Check, X, Loader2, RefreshCw, Fuel, Droplets, UtensilsCrossed, Snowflake, CalendarIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import AircraftTypeInput from "@/components/fuelops/AircraftTypeInput";
 import CustomerInput from "@/components/fuelops/CustomerInput";
 import type { Tables } from "@/integrations/supabase/types";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const SERVICE_TYPES = [
   { value: "fuel", label: "Fuel", icon: Fuel },
@@ -51,6 +53,7 @@ interface FuelTicket {
   assigned_driver_id: string | null;
   completed_at: string | null;
   created_at: string;
+  requested_date: string | null;
   customers: { name: string } | null;
 }
 
@@ -79,6 +82,7 @@ const FuelTickets = () => {
     fuel_type: "" as "100LL" | "Jet-A" | "",
     prist: false,
     gallons_requested: "",
+    requested_date: new Date() as Date | undefined,
     notes: "",
   };
   const [form, setForm] = useState(defaultForm);
@@ -127,6 +131,7 @@ const FuelTickets = () => {
       fuel_type: isFuelService ? (form.fuel_type as "100LL" | "Jet-A") : null,
       prist: isFuelService ? form.prist : false,
       gallons_requested: form.gallons_requested ? parseFloat(form.gallons_requested) : null,
+      requested_date: form.requested_date ? format(form.requested_date, "yyyy-MM-dd") : null,
       notes: form.notes || null,
     });
 
@@ -233,9 +238,38 @@ const FuelTickets = () => {
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label>Aircraft Type</Label>
-                  <AircraftTypeInput value={form.aircraft_type} onChange={(v) => setForm({ ...form, aircraft_type: v })} />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Aircraft Type</Label>
+                    <AircraftTypeInput value={form.aircraft_type} onChange={(v) => setForm({ ...form, aircraft_type: v })} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Service Date</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-full justify-start text-left font-normal",
+                            !form.requested_date && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="w-4 h-4 mr-2" />
+                          {form.requested_date ? format(form.requested_date, "PPP") : "Today"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={form.requested_date}
+                          onSelect={(d) => setForm({ ...form, requested_date: d })}
+                          initialFocus
+                          className={cn("p-3 pointer-events-auto")}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <p className="text-xs text-muted-foreground">Date performed or future request date</p>
+                  </div>
                 </div>
 
                 {/* Fuel-specific fields */}
@@ -385,6 +419,12 @@ const TicketCard = ({
               {ticket.aircraft_tail_number && <span><span className="text-muted-foreground">Tail:</span> {ticket.aircraft_tail_number}</span>}
               {ticket.aircraft_type && <span><span className="text-muted-foreground">Type:</span> {ticket.aircraft_type}</span>}
               {ticket.gallons_requested && <span><span className="text-muted-foreground">Gal:</span> {ticket.gallons_requested}</span>}
+              {ticket.requested_date && (
+                <span>
+                  <span className="text-muted-foreground">Date:</span>{" "}
+                  {format(new Date(ticket.requested_date + "T00:00:00"), "MMM d, yyyy")}
+                </span>
+              )}
             </div>
 
             {ticket.notes && <p className="text-sm text-muted-foreground">{ticket.notes}</p>}
