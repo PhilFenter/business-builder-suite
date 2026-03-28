@@ -15,8 +15,8 @@ const CTASection = () => {
               <span className="text-primary">fuel operations?</span>
             </h2>
             <p className="text-muted-foreground text-lg max-w-xl mx-auto mb-10">
-              Get a personalized demo and see how FuelOps can streamline your FBO's 
-              fueling, billing, and payments in one platform.
+              Get a personalized demo and see how Hillcrest's FuelOps platform can streamline your 
+              FBO's fueling, billing, and payments — backed by 60 years of aviation experience.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Button variant="hero" size="lg" className="px-10 py-6">
