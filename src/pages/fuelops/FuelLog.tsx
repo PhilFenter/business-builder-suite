@@ -12,8 +12,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Fuel, Check, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
-import type { Tables } from "@/integrations/supabase/types";
 import AircraftTypeInput from "@/components/fuelops/AircraftTypeInput";
+import CustomerInput from "@/components/fuelops/CustomerInput";
 
 const FuelLog = () => {
   const { user } = useAuth();
