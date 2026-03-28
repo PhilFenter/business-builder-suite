@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Plane, Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
-import NavLink from "@/components/NavLink";
+import { NavLink } from "@/components/NavLink";
 import { useState } from "react";
 
 const Navbar = () => {
