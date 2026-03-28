@@ -428,7 +428,7 @@ const FuelTickets = () => {
                   Upcoming departures & scheduled services — review at shift start to prioritize fueling
                 </div>
                 {scheduledTickets.map((ticket) => (
-                  <TicketCard key={ticket.id} ticket={ticket} isDriver={isDriver} onUpdate={updateStatus} />
+                  <TicketCard key={ticket.id} ticket={ticket} isDriver={isDriver} onUpdate={updateStatus} onComplete={handleComplete} />
                 ))}
               </>
             )}
