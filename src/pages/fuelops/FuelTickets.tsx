@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import FuelOpsLayout from "@/components/fuelops/FuelOpsLayout";
@@ -67,6 +68,7 @@ const statusColors: Record<string, string> = {
 
 const FuelTickets = () => {
   const { user, hasRole } = useAuth();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [tickets, setTickets] = useState<FuelTicket[]>([]);
   const [customers, setCustomers] = useState<Tables<"customers">[]>([]);
@@ -157,6 +159,15 @@ const FuelTickets = () => {
 
     const { error } = await supabase.from("fuel_tickets").update(updates).eq("id", ticketId);
     if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+  };
+
+  // For fuel tickets, navigate to pre-filled log; for others, mark completed directly
+  const handleComplete = (ticket: FuelTicket) => {
+    if (ticket.service_type === "fuel") {
+      navigate(`/fuelops/log?ticket=${ticket.id}`);
+    } else {
+      updateStatus(ticket.id, "completed");
+    }
   };
 
   const activeTickets = tickets.filter(t => t.status === "pending" || t.status === "in_progress");
@@ -396,7 +407,7 @@ const FuelTickets = () => {
               </Card>
             ) : (
               nowTickets.map((ticket) => (
-                <TicketCard key={ticket.id} ticket={ticket} isDriver={isDriver} onUpdate={updateStatus} />
+                <TicketCard key={ticket.id} ticket={ticket} isDriver={isDriver} onUpdate={updateStatus} onComplete={handleComplete} />
               ))
             )}
           </TabsContent>
@@ -417,7 +428,7 @@ const FuelTickets = () => {
                   Upcoming departures & scheduled services — review at shift start to prioritize fueling
                 </div>
                 {scheduledTickets.map((ticket) => (
-                  <TicketCard key={ticket.id} ticket={ticket} isDriver={isDriver} onUpdate={updateStatus} />
+                  <TicketCard key={ticket.id} ticket={ticket} isDriver={isDriver} onUpdate={updateStatus} onComplete={handleComplete} />
                 ))}
               </>
             )}
@@ -428,7 +439,7 @@ const FuelTickets = () => {
               <p className="text-muted-foreground text-sm text-center py-8">No completed tickets yet</p>
             ) : (
               completedTickets.slice(0, 20).map((ticket) => (
-                <TicketCard key={ticket.id} ticket={ticket} isDriver={isDriver} onUpdate={updateStatus} />
+                <TicketCard key={ticket.id} ticket={ticket} isDriver={isDriver} onUpdate={updateStatus} onComplete={handleComplete} />
               ))
             )}
           </TabsContent>
@@ -442,10 +453,12 @@ const TicketCard = ({
   ticket,
   isDriver,
   onUpdate,
+  onComplete,
 }: {
   ticket: FuelTicket;
   isDriver: boolean;
   onUpdate: (id: string, status: string) => void;
+  onComplete: (ticket: FuelTicket) => void;
 }) => {
   const [expanded, setExpanded] = useState(ticket.status === "in_progress");
   const svc = SERVICE_TYPES.find(s => s.value === ticket.service_type) ?? SERVICE_TYPES[0];
@@ -501,7 +514,7 @@ const TicketCard = ({
                 </Button>
               )}
               {ticket.status === "in_progress" && (
-                <Button size="sm" onClick={() => onUpdate(ticket.id, "completed")}>
+                <Button size="sm" onClick={() => onComplete(ticket)}>
                   <Check className="w-4 h-4 mr-1" /> Done
                 </Button>
               )}

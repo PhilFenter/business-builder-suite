@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import FuelOpsLayout from "@/components/fuelops/FuelOpsLayout";
@@ -9,7 +10,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Fuel, Check, Loader2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Fuel, Check, Loader2, ArrowLeft, ClipboardList } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import AircraftTypeInput from "@/components/fuelops/AircraftTypeInput";
@@ -17,33 +19,83 @@ import CustomerInput from "@/components/fuelops/CustomerInput";
 
 import type { Tables } from "@/integrations/supabase/types";
 
+interface FormState {
+  customer_id: string;
+  customer_name: string;
+  fuel_type: "100LL" | "Jet-A" | "";
+  gallons: string;
+  price_per_gallon: string;
+  aircraft_tail_number: string;
+  aircraft_type: string;
+  prist: boolean;
+  meter_start: string;
+  meter_stop: string;
+  truck_id: string;
+  notes: string;
+}
+
+const emptyForm: FormState = {
+  customer_id: "",
+  customer_name: "",
+  fuel_type: "",
+  gallons: "",
+  price_per_gallon: "",
+  aircraft_tail_number: "",
+  aircraft_type: "",
+  prist: false,
+  meter_start: "",
+  meter_stop: "",
+  truck_id: "",
+  notes: "",
+};
+
 const FuelLog = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const ticketId = searchParams.get("ticket");
+
   const [customers, setCustomers] = useState<Tables<"customers">[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [ticketData, setTicketData] = useState<any>(null);
+  const [form, setForm] = useState<FormState>({ ...emptyForm });
 
-  const [form, setForm] = useState({
-    customer_id: "",
-    customer_name: "",
-    fuel_type: "" as "100LL" | "Jet-A" | "",
-    gallons: "",
-    price_per_gallon: "",
-    aircraft_tail_number: "",
-    aircraft_type: "",
-    prist: false,
-    meter_start: "",
-    meter_stop: "",
-    truck_id: "",
-    notes: "",
-  });
-
+  // Fetch customers
   useEffect(() => {
     supabase.from("customers").select("*").eq("is_active", true).order("name").then(({ data }) => {
       if (data) setCustomers(data);
     });
   }, []);
+
+  // If ticket ID in URL, fetch ticket and pre-fill
+  useEffect(() => {
+    if (!ticketId) return;
+    supabase
+      .from("fuel_tickets")
+      .select("*, customers(name)")
+      .eq("id", ticketId)
+      .single()
+      .then(({ data, error }) => {
+        if (error || !data) {
+          toast({ title: "Ticket not found", variant: "destructive" });
+          return;
+        }
+        setTicketData(data);
+        setForm({
+          ...emptyForm,
+          customer_id: data.customer_id ?? "",
+          customer_name: data.customer_name ?? "",
+          fuel_type: (data.fuel_type as "100LL" | "Jet-A") ?? "",
+          gallons: data.gallons_requested ? String(data.gallons_requested) : "",
+          aircraft_tail_number: data.aircraft_tail_number ?? "",
+          aircraft_type: data.aircraft_type ?? "",
+          prist: data.prist ?? false,
+          notes: data.notes ?? "",
+        });
+      });
+  }, [ticketId]);
 
   const meterGallons = form.meter_start && form.meter_stop
     ? Math.max(0, parseFloat(form.meter_stop) - parseFloat(form.meter_start)).toFixed(1)
@@ -65,7 +117,9 @@ const FuelLog = () => {
     if (!user || !form.customer_id || !form.fuel_type || !form.gallons || !form.price_per_gallon) return;
 
     setSubmitting(true);
-    const { error } = await supabase.from("fuel_deliveries").insert({
+
+    // 1. Insert delivery
+    const { data: delivery, error } = await supabase.from("fuel_deliveries").insert({
       driver_id: user.id,
       customer_id: form.customer_id || null,
       customer_name: form.customer_name || null,
@@ -80,20 +134,38 @@ const FuelLog = () => {
       meter_stop: form.meter_stop ? parseFloat(form.meter_stop) : null,
       truck_id: form.truck_id || null,
       notes: form.notes || null,
-    });
-
-    setSubmitting(false);
+    }).select("id").single();
 
     if (error) {
+      setSubmitting(false);
       toast({ title: "Error", description: error.message, variant: "destructive" });
-    } else {
-      setSuccess(true);
-      toast({ title: "Delivery Logged", description: `${form.gallons} gal ${form.fuel_type}${form.prist ? " +Prist" : ""} — $${totalAmount}` });
-      setTimeout(() => {
-        setSuccess(false);
-        setForm({ customer_id: "", customer_name: "", fuel_type: "", gallons: "", price_per_gallon: "", aircraft_tail_number: "", aircraft_type: "", prist: false, meter_start: "", meter_stop: "", truck_id: "", notes: "" });
-      }, 2000);
+      return;
     }
+
+    // 2. If from a ticket, link delivery and mark completed
+    if (ticketId && delivery) {
+      await supabase.from("fuel_tickets").update({
+        delivery_id: delivery.id,
+        status: "completed",
+        completed_at: new Date().toISOString(),
+      }).eq("id", ticketId);
+    }
+
+    setSubmitting(false);
+    setSuccess(true);
+    toast({
+      title: ticketId ? "Ticket Completed & Delivery Logged" : "Delivery Logged",
+      description: `${form.gallons} gal ${form.fuel_type}${form.prist ? " +Prist" : ""} — $${totalAmount}`,
+    });
+
+    setTimeout(() => {
+      if (ticketId) {
+        navigate("/fuelops/tickets");
+      } else {
+        setSuccess(false);
+        setForm({ ...emptyForm });
+      }
+    }, 1500);
   };
 
   return (
@@ -103,6 +175,29 @@ const FuelLog = () => {
           <h1 className="font-display text-2xl font-bold">Log Fuel Delivery</h1>
           <p className="text-muted-foreground text-sm">Record a new fuel delivery from the truck</p>
         </div>
+
+        {/* Ticket banner */}
+        {ticketData && (
+          <Card className="border-primary/30 border-2 bg-primary/5">
+            <CardContent className="p-4 flex items-center gap-3">
+              <ClipboardList className="w-5 h-5 text-primary shrink-0" />
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium">
+                  Filling from Service Ticket
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {ticketData.customers?.name ?? ticketData.customer_name ?? "Unknown"} —{" "}
+                  {ticketData.aircraft_tail_number ?? "No tail #"} —{" "}
+                  {ticketData.fuel_type}{ticketData.prist ? " + Prist" : ""}
+                  {ticketData.gallons_requested ? ` — ${ticketData.gallons_requested} gal requested` : ""}
+                </p>
+              </div>
+              <Button variant="ghost" size="sm" onClick={() => navigate("/fuelops/tickets")}>
+                <ArrowLeft className="w-4 h-4 mr-1" /> Back
+              </Button>
+            </CardContent>
+          </Card>
+        )}
 
         <Card className="border-border/50">
           <CardHeader>
@@ -261,6 +356,8 @@ const FuelLog = () => {
                   <><Check className="w-5 h-5 mr-2" /> Logged Successfully</>
                 ) : submitting ? (
                   <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Submitting...</>
+                ) : ticketId ? (
+                  "Complete Ticket & Log Delivery"
                 ) : (
                   "Log Delivery"
                 )}
