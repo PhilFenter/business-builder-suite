@@ -352,6 +352,28 @@ const FuelTickets = () => {
                   </div>
                 )}
 
+                {/* Pilot Contact Info */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Pilot Phone</Label>
+                    <Input
+                      type="tel"
+                      value={form.pilot_phone}
+                      onChange={(e) => setForm({ ...form, pilot_phone: e.target.value })}
+                      placeholder="(555) 123-4567"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Pilot Email</Label>
+                    <Input
+                      type="email"
+                      value={form.pilot_email}
+                      onChange={(e) => setForm({ ...form, pilot_email: e.target.value })}
+                      placeholder="pilot@example.com"
+                    />
+                  </div>
+                </div>
+
                 {/* Notes */}
                 <div className="space-y-2">
                   <Label>Notes</Label>
