@@ -14,8 +14,8 @@ const HeroSection = () => {
           width={1920}
           height={1080}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/40" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-background/20" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-80" />
       </div>
 
       <div className="relative z-10 container mx-auto px-6 py-24 lg:py-32">
