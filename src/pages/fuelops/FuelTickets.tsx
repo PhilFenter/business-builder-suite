@@ -260,7 +260,7 @@ const FuelTickets = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="space-y-2">
                     <Label>Service Date</Label>
-                    <Popover>
+                    <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
                       <PopoverTrigger asChild>
                         <Button
                           variant="outline"
@@ -279,6 +279,7 @@ const FuelTickets = () => {
                           selected={form.requested_date}
                           onSelect={(d) => {
                             setForm({ ...form, requested_date: d });
+                            setCalendarOpen(false);
                           }}
                           initialFocus
                           className={cn("p-3 pointer-events-auto")}
