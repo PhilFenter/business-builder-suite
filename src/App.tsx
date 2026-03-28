@@ -17,6 +17,7 @@ import Dashboard from "./pages/fuelops/Dashboard.tsx";
 import FuelLog from "./pages/fuelops/FuelLog.tsx";
 import Customers from "./pages/fuelops/Customers.tsx";
 import Billing from "./pages/fuelops/Billing.tsx";
+import FuelTickets from "./pages/fuelops/FuelTickets.tsx";
 
 const queryClient = new QueryClient();
 
