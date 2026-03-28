@@ -599,6 +599,35 @@ const TicketCard = ({
                 </div>
               )}
             </div>
+            {/* Pilot Contact */}
+            {(ticket.pilot_phone || ticket.pilot_email) && (
+              <div className="flex flex-wrap gap-2 pt-1">
+                {ticket.pilot_phone && (
+                  <>
+                    <Button size="sm" variant="outline" asChild onClick={(e) => e.stopPropagation()}>
+                      <a href={`tel:${ticket.pilot_phone}`}>
+                        <Phone className="w-3.5 h-3.5 mr-1" /> Call
+                      </a>
+                    </Button>
+                    <Button size="sm" variant="outline" asChild onClick={(e) => e.stopPropagation()}>
+                      <a href={`sms:${ticket.pilot_phone}`}>
+                        <MessageSquare className="w-3.5 h-3.5 mr-1" /> Text
+                      </a>
+                    </Button>
+                  </>
+                )}
+                {ticket.pilot_email && (
+                  <Button size="sm" variant="outline" asChild onClick={(e) => e.stopPropagation()}>
+                    <a href={`mailto:${ticket.pilot_email}`}>
+                      <Mail className="w-3.5 h-3.5 mr-1" /> Email
+                    </a>
+                  </Button>
+                )}
+                <span className="text-xs text-muted-foreground self-center">
+                  {ticket.pilot_phone}{ticket.pilot_phone && ticket.pilot_email ? " · " : ""}{ticket.pilot_email}
+                </span>
+              </div>
+            )}
             {ticket.notes && (
               <div className="text-sm">
                 <span className="text-muted-foreground text-xs block">Notes</span>
