@@ -328,14 +328,20 @@ const FuelLog = () => {
                 </div>
               </div>
 
-              {/* Truck ID */}
+              {/* Truck */}
               <div className="space-y-2">
-                <Label>Truck ID</Label>
-                <Input
-                  value={form.truck_id}
-                  onChange={(e) => setForm({ ...form, truck_id: e.target.value })}
-                  placeholder="Truck 1"
-                />
+                <Label>Truck</Label>
+                <Select value={form.truck_id} onValueChange={(v) => setForm({ ...form, truck_id: v })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select truck" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Truck 1">Truck 1</SelectItem>
+                    <SelectItem value="Truck 2">Truck 2</SelectItem>
+                    <SelectItem value="Truck 3">Truck 3</SelectItem>
+                    <SelectItem value="Truck 4">Truck 4</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               {/* Notes */}
