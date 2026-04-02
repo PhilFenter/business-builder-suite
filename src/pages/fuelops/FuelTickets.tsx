@@ -33,6 +33,7 @@ const FuelTickets = () => {
   const [showForm, setShowForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [calendarOpen, setCalendarOpen] = useState(false);
+  const [driverProfiles, setDriverProfiles] = useState<Record<string, string>>({});
 
   const defaultForm = {
     service_type: "fuel" as string,
