@@ -224,18 +224,42 @@ const FuelTickets = () => {
                 </div>
 
                 {/* Customer — fillable for transients */}
+                <div className="space-y-2">
+                  <Label>Customer / Pilot Name *</Label>
+                  <CustomerInput
+                    customers={customers}
+                    selectedId={form.customer_id}
+                    customName={form.customer_name}
+                    onSelectAccount={(id) => setForm((current) => ({ ...current, customer_id: id }))}
+                    onTypeCustom={(name) => setForm((current) => ({ ...current, customer_name: name }))}
+                  />
+                  <p className="text-xs text-muted-foreground">Type a name for transients or select a house account</p>
+                </div>
+
+                {/* Pilot Contact Info — right below name */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label>Customer / Pilot Name *</Label>
-                    <CustomerInput
-                      customers={customers}
-                      selectedId={form.customer_id}
-                      customName={form.customer_name}
-                      onSelectAccount={(id) => setForm((current) => ({ ...current, customer_id: id }))}
-                      onTypeCustom={(name) => setForm((current) => ({ ...current, customer_name: name }))}
+                    <Label>Pilot Phone</Label>
+                    <Input
+                      type="tel"
+                      value={form.pilot_phone}
+                      onChange={(e) => setForm({ ...form, pilot_phone: e.target.value })}
+                      placeholder="(555) 123-4567"
                     />
-                    <p className="text-xs text-muted-foreground">Type a name for transients or select a house account</p>
                   </div>
+                  <div className="space-y-2">
+                    <Label>Pilot Email</Label>
+                    <Input
+                      type="email"
+                      value={form.pilot_email}
+                      onChange={(e) => setForm({ ...form, pilot_email: e.target.value })}
+                      placeholder="pilot@example.com"
+                    />
+                  </div>
+                </div>
+
+                {/* Aircraft Info */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label>Tail #</Label>
                     <Input
@@ -244,12 +268,12 @@ const FuelTickets = () => {
                       placeholder="N12345"
                     />
                   </div>
+                  <div className="space-y-2">
+                    <Label>Aircraft Type</Label>
+                    <AircraftTypeInput value={form.aircraft_type} onChange={(v) => setForm({ ...form, aircraft_type: v })} />
+                  </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label>Aircraft Type</Label>
-                  <AircraftTypeInput value={form.aircraft_type} onChange={(v) => setForm({ ...form, aircraft_type: v })} />
-                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="space-y-2">
                     <Label>Service Date</Label>
@@ -292,62 +316,6 @@ const FuelTickets = () => {
                 </div>
 
                 {/* Fuel-specific fields */}
-                {isFuelService && (
-                  <div className="space-y-4 p-4 rounded-lg bg-secondary/30 border border-border/50">
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      <div className="space-y-2">
-                        <Label>Fuel Type *</Label>
-                        <Select value={form.fuel_type} onValueChange={(v) => setForm({ ...form, fuel_type: v as any })}>
-                          <SelectTrigger><SelectValue placeholder="Fuel type" /></SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="100LL">100LL (Avgas)</SelectItem>
-                            <SelectItem value="Jet-A">Jet-A</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Gallons</Label>
-                        <Input
-                          type="number" step="0.1" min="0"
-                          value={form.gallons_requested}
-                          onChange={(e) => setForm({ ...form, gallons_requested: e.target.value })}
-                          placeholder="Top off / Amount"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Prist</Label>
-                        <div className="flex items-center gap-3 h-10 px-3 rounded-md border border-input bg-background">
-                          <Switch checked={form.prist} onCheckedChange={(v) => setForm({ ...form, prist: v })} />
-                          <span className={cn("text-sm", form.prist ? "text-foreground font-medium" : "text-muted-foreground")}>
-                            {form.prist ? "Yes" : "No"}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Pilot Contact Info */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Pilot Phone</Label>
-                    <Input
-                      type="tel"
-                      value={form.pilot_phone}
-                      onChange={(e) => setForm({ ...form, pilot_phone: e.target.value })}
-                      placeholder="(555) 123-4567"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Pilot Email</Label>
-                    <Input
-                      type="email"
-                      value={form.pilot_email}
-                      onChange={(e) => setForm({ ...form, pilot_email: e.target.value })}
-                      placeholder="pilot@example.com"
-                    />
-                  </div>
-                </div>
 
                 {/* Notes */}
                 <div className="space-y-2">
