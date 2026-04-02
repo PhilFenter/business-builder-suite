@@ -43,6 +43,7 @@ export interface FuelTicket {
   notes: string | null;
   status: string;
   service_type: string;
+  service_types: string[];
   created_by: string;
   assigned_driver_id: string | null;
   completed_at: string | null;
@@ -64,9 +65,9 @@ interface TicketCardProps {
 
 const TicketCard = ({ ticket, isDriver, onUpdate, onComplete, driverName }: TicketCardProps) => {
   const [expanded, setExpanded] = useState(ticket.status === "in_progress");
-  const svc = SERVICE_TYPES.find(s => s.value === ticket.service_type) ?? SERVICE_TYPES[0];
+  const serviceList = ticket.service_types?.length ? ticket.service_types : [ticket.service_type];
   const customerDisplay = ticket.customers?.name ?? ticket.customer_name ?? null;
-  const isFuel = ticket.service_type === "fuel";
+  const isFuel = serviceList.includes("fuel");
 
   const handleClaim = () => {
     onUpdate(ticket.id, "in_progress");
@@ -93,10 +94,15 @@ const TicketCard = ({ ticket, isDriver, onUpdate, onComplete, driverName }: Tick
               <Badge variant="outline" className={cn("text-xs", statusColors[ticket.status])}>
                 {ticket.status.replace("_", " ")}
               </Badge>
-              <Badge variant="outline" className={cn("text-xs", serviceColors[ticket.service_type] ?? serviceColors.other)}>
-                <svc.icon className="w-3 h-3 mr-1" />
-                {svc.label}
-              </Badge>
+              {serviceList.map((st) => {
+                const svc = SERVICE_TYPES.find(s => s.value === st) ?? SERVICE_TYPES[4];
+                return (
+                  <Badge key={st} variant="outline" className={cn("text-xs", serviceColors[st] ?? serviceColors.other)}>
+                    <svc.icon className="w-3 h-3 mr-1" />
+                    {svc.label}
+                  </Badge>
+                );
+              })}
               {ticket.fuel_type && (
                 <Badge variant="outline" className={cn("text-xs", ticket.fuel_type === "100LL" ? "bg-blue-500/10 text-blue-400" : "bg-amber-500/10 text-amber-400")}>
                   {ticket.fuel_type}

@@ -36,7 +36,7 @@ const FuelTickets = () => {
   const [driverProfiles, setDriverProfiles] = useState<Record<string, string>>({});
 
   const defaultForm = {
-    service_type: "fuel" as string,
+    service_types: ["fuel"] as string[],
     customer_id: "",
     customer_name: "",
     aircraft_tail_number: "",
@@ -92,13 +92,17 @@ const FuelTickets = () => {
     return () => { supabase.removeChannel(channel); };
   }, []);
 
-  const isFuelService = form.service_type === "fuel";
+  const isFuelService = form.service_types.includes("fuel");
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
     if (!form.customer_id && !form.customer_name) {
       toast({ title: "Missing field", description: "Please enter a customer or pilot name.", variant: "destructive" });
+      return;
+    }
+    if (form.service_types.length === 0) {
+      toast({ title: "Missing field", description: "Please select at least one service type.", variant: "destructive" });
       return;
     }
     if (isFuelService && !form.fuel_type) {
@@ -110,7 +114,8 @@ const FuelTickets = () => {
 
     const { error } = await supabase.from("fuel_tickets").insert({
       created_by: user.id,
-      service_type: form.service_type,
+      service_type: form.service_types[0],
+      service_types: form.service_types as any,
       customer_id: form.customer_id || null,
       customer_name: form.customer_name || null,
       aircraft_tail_number: form.aircraft_tail_number || null,
@@ -129,8 +134,8 @@ const FuelTickets = () => {
     if (error) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
     } else {
-      const svc = SERVICE_TYPES.find(s => s.value === form.service_type);
-      toast({ title: "Ticket Created", description: `${svc?.label} ticket sent to the flight line` });
+      const labels = form.service_types.map(st => SERVICE_TYPES.find(s => s.value === st)?.label).filter(Boolean).join(" + ");
+      toast({ title: "Ticket Created", description: `${labels} ticket sent to the flight line` });
       setForm(defaultForm);
       setShowForm(false);
     }
@@ -147,7 +152,8 @@ const FuelTickets = () => {
 
   // For fuel tickets, navigate to pre-filled log; for others, mark completed directly
   const handleComplete = (ticket: FuelTicket) => {
-    if (ticket.service_type === "fuel") {
+    const serviceList = ticket.service_types?.length ? ticket.service_types : [ticket.service_type];
+    if (serviceList.includes("fuel")) {
       navigate(`/fuelops/log?ticket=${ticket.id}`);
     } else {
       updateStatus(ticket.id, "completed");
@@ -207,22 +213,30 @@ const FuelTickets = () => {
                 <div className="space-y-2">
                   <Label>Service Type *</Label>
                   <div className="flex flex-wrap gap-2">
-                    {SERVICE_TYPES.map((svc) => (
-                      <button
-                        key={svc.value}
-                        type="button"
-                        onClick={() => setForm({ ...form, service_type: svc.value })}
-                        className={cn(
-                          "flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-all",
-                          form.service_type === svc.value
-                            ? "border-primary bg-primary/10 text-primary"
-                            : "border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
-                        )}
-                      >
-                        <svc.icon className="w-4 h-4" />
-                        {svc.label}
-                      </button>
-                    ))}
+                    {SERVICE_TYPES.map((svc) => {
+                      const isSelected = form.service_types.includes(svc.value);
+                      return (
+                        <button
+                          key={svc.value}
+                          type="button"
+                          onClick={() => {
+                            const next = isSelected
+                              ? form.service_types.filter(s => s !== svc.value)
+                              : [...form.service_types, svc.value];
+                            setForm({ ...form, service_types: next });
+                          }}
+                          className={cn(
+                            "flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-all",
+                            isSelected
+                              ? "border-primary bg-primary/10 text-primary"
+                              : "border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
+                          )}
+                        >
+                          <svc.icon className="w-4 h-4" />
+                          {svc.label}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -366,9 +380,9 @@ const FuelTickets = () => {
                     value={form.notes}
                     onChange={(e) => setForm({ ...form, notes: e.target.value })}
                     placeholder={
-                      form.service_type === "catering" ? "Menu items, headcount, delivery time..."
-                        : form.service_type === "de_ice" ? "Aircraft location, type of treatment needed..."
-                        : form.service_type === "lav_service" ? "Aircraft location, any special instructions..."
+                      form.service_types.includes("catering") ? "Menu items, headcount, delivery time..."
+                        : form.service_types.includes("de_ice") ? "Aircraft location, type of treatment needed..."
+                        : form.service_types.includes("lav_service") ? "Aircraft location, any special instructions..."
                         : "Special instructions, parking location, etc."
                     }
                     rows={2}
