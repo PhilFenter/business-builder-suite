@@ -130,8 +130,8 @@ const FuelTickets = () => {
     if (error) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
     } else {
-      const svc = SERVICE_TYPES.find(s => s.value === form.service_type);
-      toast({ title: "Ticket Created", description: `${svc?.label} ticket sent to the flight line` });
+      const labels = form.service_types.map(st => SERVICE_TYPES.find(s => s.value === st)?.label).filter(Boolean).join(" + ");
+      toast({ title: "Ticket Created", description: `${labels} ticket sent to the flight line` });
       setForm(defaultForm);
       setShowForm(false);
     }
