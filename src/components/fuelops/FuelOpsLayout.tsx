@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
-  Fuel, LayoutDashboard, Truck, FileText, Users, LogOut, Menu, X, ChevronRight, ClipboardList,
+  Fuel, LayoutDashboard, Truck, FileText, Users, LogOut, Menu, X, ChevronRight, ClipboardList, BarChart3,
 } from "lucide-react";
 
 const FuelOpsLayout = ({ children }: { children: ReactNode }) => {
