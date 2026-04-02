@@ -127,6 +127,33 @@ export type Database = {
           },
         ]
       }
+      fuel_prices: {
+        Row: {
+          created_at: string
+          effective_date: string
+          fuel_type: string
+          id: string
+          price_per_gallon: number
+          set_by: string
+        }
+        Insert: {
+          created_at?: string
+          effective_date?: string
+          fuel_type: string
+          id?: string
+          price_per_gallon: number
+          set_by: string
+        }
+        Update: {
+          created_at?: string
+          effective_date?: string
+          fuel_type?: string
+          id?: string
+          price_per_gallon?: number
+          set_by?: string
+        }
+        Relationships: []
+      }
       fuel_tickets: {
         Row: {
           aircraft_tail_number: string | null
