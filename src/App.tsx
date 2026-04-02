@@ -18,6 +18,7 @@ import FuelLog from "./pages/fuelops/FuelLog.tsx";
 import Customers from "./pages/fuelops/Customers.tsx";
 import Billing from "./pages/fuelops/Billing.tsx";
 import FuelTickets from "./pages/fuelops/FuelTickets.tsx";
+import Reports from "./pages/fuelops/Reports.tsx";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,7 @@ const App = () => (
             <Route path="/fuelops/customers" element={<ProtectedRoute><Customers /></ProtectedRoute>} />
             <Route path="/fuelops/tickets" element={<ProtectedRoute><FuelTickets /></ProtectedRoute>} />
             <Route path="/fuelops/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
+            <Route path="/fuelops/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
