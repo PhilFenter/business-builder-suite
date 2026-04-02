@@ -110,7 +110,8 @@ const FuelTickets = () => {
 
     const { error } = await supabase.from("fuel_tickets").insert({
       created_by: user.id,
-      service_type: form.service_type,
+      service_type: form.service_types[0],
+      service_types: form.service_types,
       customer_id: form.customer_id || null,
       customer_name: form.customer_name || null,
       aircraft_tail_number: form.aircraft_tail_number || null,
