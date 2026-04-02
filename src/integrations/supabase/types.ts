@@ -64,7 +64,7 @@ export type Database = {
           aircraft_tail_number: string | null
           aircraft_type: string | null
           created_at: string
-          customer_id: string
+          customer_id: string | null
           customer_name: string | null
           delivered_at: string
           driver_id: string
@@ -83,7 +83,7 @@ export type Database = {
           aircraft_tail_number?: string | null
           aircraft_type?: string | null
           created_at?: string
-          customer_id: string
+          customer_id?: string | null
           customer_name?: string | null
           delivered_at?: string
           driver_id: string
@@ -102,7 +102,7 @@ export type Database = {
           aircraft_tail_number?: string | null
           aircraft_type?: string | null
           created_at?: string
-          customer_id?: string
+          customer_id?: string | null
           customer_name?: string | null
           delivered_at?: string
           driver_id?: string
