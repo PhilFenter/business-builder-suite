@@ -94,10 +94,15 @@ const TicketCard = ({ ticket, isDriver, onUpdate, onComplete, driverName }: Tick
               <Badge variant="outline" className={cn("text-xs", statusColors[ticket.status])}>
                 {ticket.status.replace("_", " ")}
               </Badge>
-              <Badge variant="outline" className={cn("text-xs", serviceColors[ticket.service_type] ?? serviceColors.other)}>
-                <svc.icon className="w-3 h-3 mr-1" />
-                {svc.label}
-              </Badge>
+              {serviceList.map((st) => {
+                const svc = SERVICE_TYPES.find(s => s.value === st) ?? SERVICE_TYPES[4];
+                return (
+                  <Badge key={st} variant="outline" className={cn("text-xs", serviceColors[st] ?? serviceColors.other)}>
+                    <svc.icon className="w-3 h-3 mr-1" />
+                    {svc.label}
+                  </Badge>
+                );
+              })}
               {ticket.fuel_type && (
                 <Badge variant="outline" className={cn("text-xs", ticket.fuel_type === "100LL" ? "bg-blue-500/10 text-blue-400" : "bg-amber-500/10 text-amber-400")}>
                   {ticket.fuel_type}
