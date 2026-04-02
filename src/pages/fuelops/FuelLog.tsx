@@ -218,8 +218,8 @@ const FuelLog = () => {
                   customers={customers}
                   selectedId={form.customer_id}
                   customName={form.customer_name}
-                  onSelectAccount={(id) => setForm({ ...form, customer_id: id })}
-                  onTypeCustom={(name) => setForm({ ...form, customer_name: name })}
+                  onSelectAccount={(id) => setForm((current) => ({ ...current, customer_id: id }))}
+                  onTypeCustom={(name) => setForm((current) => ({ ...current, customer_name: name }))}
                 />
                 <p className="text-xs text-muted-foreground">Type a name for transients or select a house account</p>
               </div>
