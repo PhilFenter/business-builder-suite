@@ -19,6 +19,7 @@ const FuelOpsLayout = ({ children }: { children: ReactNode }) => {
     { to: "/fuelops/log", icon: Truck, label: "Delivery Log", roles: ["admin", "driver"] },
     { to: "/fuelops/customers", icon: Users, label: "Customers", roles: ["admin", "billing_clerk"] },
     { to: "/fuelops/billing", icon: FileText, label: "Billing", roles: ["admin", "billing_clerk"] },
+    { to: "/fuelops/reports", icon: BarChart3, label: "Reports", roles: ["admin", "billing_clerk"] },
   ];
 
   const filteredNav = navItems.filter((item) =>
