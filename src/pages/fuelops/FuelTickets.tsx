@@ -376,9 +376,9 @@ const FuelTickets = () => {
                     value={form.notes}
                     onChange={(e) => setForm({ ...form, notes: e.target.value })}
                     placeholder={
-                      form.service_type === "catering" ? "Menu items, headcount, delivery time..."
-                        : form.service_type === "de_ice" ? "Aircraft location, type of treatment needed..."
-                        : form.service_type === "lav_service" ? "Aircraft location, any special instructions..."
+                      form.service_types.includes("catering") ? "Menu items, headcount, delivery time..."
+                        : form.service_types.includes("de_ice") ? "Aircraft location, type of treatment needed..."
+                        : form.service_types.includes("lav_service") ? "Aircraft location, any special instructions..."
                         : "Special instructions, parking location, etc."
                     }
                     rows={2}
