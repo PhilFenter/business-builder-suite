@@ -5,6 +5,7 @@ import FuelOpsLayout from "@/components/fuelops/FuelOpsLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Fuel, TrendingUp, Users, DollarSign, Truck, ClipboardList, Clock, CheckCircle2, AlertCircle } from "lucide-react";
+import FuelPriceCard from "@/components/fuelops/FuelPriceCard";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
