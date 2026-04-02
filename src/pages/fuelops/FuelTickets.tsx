@@ -323,6 +323,38 @@ const FuelTickets = () => {
                 </div>
 
                 {/* Fuel-specific fields */}
+                {isFuelService && (
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <Label>Fuel Type *</Label>
+                      <Select value={form.fuel_type} onValueChange={(v) => setForm({ ...form, fuel_type: v as "100LL" | "Jet-A" })}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select fuel type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Jet-A">Jet-A</SelectItem>
+                          <SelectItem value="100LL">100LL</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Gallons Requested</Label>
+                      <Input
+                        type="number"
+                        value={form.gallons_requested}
+                        onChange={(e) => setForm({ ...form, gallons_requested: e.target.value })}
+                        placeholder="e.g. 100"
+                      />
+                    </div>
+                    <div className="flex items-end gap-2 pb-1">
+                      <Switch
+                        checked={form.prist}
+                        onCheckedChange={(v) => setForm({ ...form, prist: v })}
+                      />
+                      <Label>Prist</Label>
+                    </div>
+                  </div>
+                )}
 
                 {/* Notes */}
                 <div className="space-y-2">
