@@ -36,7 +36,7 @@ const FuelTickets = () => {
   const [driverProfiles, setDriverProfiles] = useState<Record<string, string>>({});
 
   const defaultForm = {
-    service_type: "fuel" as string,
+    service_types: ["fuel"] as string[],
     customer_id: "",
     customer_name: "",
     aircraft_tail_number: "",
