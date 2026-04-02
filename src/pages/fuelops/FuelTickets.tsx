@@ -226,7 +226,7 @@ const FuelTickets = () => {
                 {/* Customer — fillable for transients */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label>Customer / Pilot Name</Label>
+                    <Label>Customer / Pilot Name *</Label>
                     <CustomerInput
                       customers={customers}
                       selectedId={form.customer_id}
