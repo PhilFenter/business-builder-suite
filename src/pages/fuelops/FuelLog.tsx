@@ -101,9 +101,9 @@ const FuelLog = () => {
     ? Math.max(0, parseFloat(form.meter_stop) - parseFloat(form.meter_start)).toFixed(1)
     : null;
 
-  // Auto-fill gallons from meter readings
+  // Auto-fill gallons from meter readings (always overrides when both meters are set)
   useEffect(() => {
-    if (meterGallons && !form.gallons) {
+    if (meterGallons) {
       setForm(f => ({ ...f, gallons: meterGallons }));
     }
   }, [meterGallons]);
