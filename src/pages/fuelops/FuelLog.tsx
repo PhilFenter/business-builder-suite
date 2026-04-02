@@ -101,12 +101,7 @@ const FuelLog = () => {
     ? Math.max(0, parseFloat(form.meter_stop) - parseFloat(form.meter_start)).toFixed(1)
     : null;
 
-  // Auto-fill gallons from meter readings (always overrides when both meters are set)
-  useEffect(() => {
-    if (meterGallons) {
-      setForm(f => ({ ...f, gallons: meterGallons }));
-    }
-  }, [meterGallons]);
+  // Metered gallons is display-only for bookkeeping — does not override ordered gallons
 
   const totalAmount = form.gallons && form.price_per_gallon
     ? (parseFloat(form.gallons) * parseFloat(form.price_per_gallon)).toFixed(2)
