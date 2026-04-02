@@ -97,6 +97,10 @@ const FuelTickets = () => {
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
+    if (!form.customer_id && !form.customer_name) {
+      toast({ title: "Missing field", description: "Please enter a customer or pilot name.", variant: "destructive" });
+      return;
+    }
     if (isFuelService && !form.fuel_type) return;
 
     setSubmitting(true);
