@@ -148,7 +148,8 @@ const FuelTickets = () => {
 
   // For fuel tickets, navigate to pre-filled log; for others, mark completed directly
   const handleComplete = (ticket: FuelTicket) => {
-    if (ticket.service_type === "fuel") {
+    const serviceList = ticket.service_types?.length ? ticket.service_types : [ticket.service_type];
+    if (serviceList.includes("fuel")) {
       navigate(`/fuelops/log?ticket=${ticket.id}`);
     } else {
       updateStatus(ticket.id, "completed");
