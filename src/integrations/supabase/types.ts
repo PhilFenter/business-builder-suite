@@ -175,6 +175,7 @@ export type Database = {
           requested_date: string | null
           requested_time: string | null
           service_type: string
+          service_types: string[]
           status: string
           updated_at: string
         }
@@ -198,6 +199,7 @@ export type Database = {
           requested_date?: string | null
           requested_time?: string | null
           service_type?: string
+          service_types?: string[]
           status?: string
           updated_at?: string
         }
@@ -221,6 +223,7 @@ export type Database = {
           requested_date?: string | null
           requested_time?: string | null
           service_type?: string
+          service_types?: string[]
           status?: string
           updated_at?: string
         }
