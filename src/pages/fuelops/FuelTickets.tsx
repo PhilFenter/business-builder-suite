@@ -92,7 +92,7 @@ const FuelTickets = () => {
     return () => { supabase.removeChannel(channel); };
   }, []);
 
-  const isFuelService = form.service_type === "fuel";
+  const isFuelService = form.service_types.includes("fuel");
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
