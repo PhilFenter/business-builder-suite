@@ -57,7 +57,22 @@ const FuelTickets = () => {
       .from("fuel_tickets")
       .select("*, customers(name)")
       .order("created_at", { ascending: false });
-    if (data) setTickets(data as any);
+    if (data) {
+      setTickets(data as any);
+      // Fetch driver names for assigned tickets
+      const driverIds = [...new Set(data.filter(t => t.assigned_driver_id).map(t => t.assigned_driver_id!))];
+      if (driverIds.length > 0) {
+        const { data: profiles } = await supabase
+          .from("profiles")
+          .select("user_id, full_name")
+          .in("user_id", driverIds);
+        if (profiles) {
+          const map: Record<string, string> = {};
+          profiles.forEach(p => { map[p.user_id] = p.full_name; });
+          setDriverProfiles(prev => ({ ...prev, ...map }));
+        }
+      }
+    }
     setLoading(false);
   };
 
