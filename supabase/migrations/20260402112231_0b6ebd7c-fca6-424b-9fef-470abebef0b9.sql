@@ -1,0 +1,1 @@
+ALTER TABLE public.fuel_deliveries ALTER COLUMN customer_id DROP NOT NULL;
