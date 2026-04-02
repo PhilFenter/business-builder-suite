@@ -65,9 +65,9 @@ interface TicketCardProps {
 
 const TicketCard = ({ ticket, isDriver, onUpdate, onComplete, driverName }: TicketCardProps) => {
   const [expanded, setExpanded] = useState(ticket.status === "in_progress");
-  const svc = SERVICE_TYPES.find(s => s.value === ticket.service_type) ?? SERVICE_TYPES[0];
+  const serviceList = ticket.service_types?.length ? ticket.service_types : [ticket.service_type];
   const customerDisplay = ticket.customers?.name ?? ticket.customer_name ?? null;
-  const isFuel = ticket.service_type === "fuel";
+  const isFuel = serviceList.includes("fuel");
 
   const handleClaim = () => {
     onUpdate(ticket.id, "in_progress");
