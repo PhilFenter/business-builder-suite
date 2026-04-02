@@ -147,6 +147,12 @@ const Dashboard = () => {
           </Link>
         </div>
 
+        {/* Today's Fuel Prices */}
+        <div>
+          <h2 className="font-display text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-2">Today's Fuel Prices</h2>
+          <FuelPriceCard />
+        </div>
+
         {/* Stats Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
           {statCards.map((stat) => (
