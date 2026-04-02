@@ -97,6 +97,10 @@ const FuelTickets = () => {
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
+    if (!form.customer_id && !form.customer_name) {
+      toast({ title: "Missing field", description: "Please enter a customer or pilot name.", variant: "destructive" });
+      return;
+    }
     if (isFuelService && !form.fuel_type) return;
 
     setSubmitting(true);
@@ -222,7 +226,7 @@ const FuelTickets = () => {
                 {/* Customer — fillable for transients */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label>Customer / Pilot Name</Label>
+                    <Label>Customer / Pilot Name *</Label>
                     <CustomerInput
                       customers={customers}
                       selectedId={form.customer_id}
