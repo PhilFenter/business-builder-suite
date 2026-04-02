@@ -209,22 +209,30 @@ const FuelTickets = () => {
                 <div className="space-y-2">
                   <Label>Service Type *</Label>
                   <div className="flex flex-wrap gap-2">
-                    {SERVICE_TYPES.map((svc) => (
-                      <button
-                        key={svc.value}
-                        type="button"
-                        onClick={() => setForm({ ...form, service_type: svc.value })}
-                        className={cn(
-                          "flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-all",
-                          form.service_type === svc.value
-                            ? "border-primary bg-primary/10 text-primary"
-                            : "border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
-                        )}
-                      >
-                        <svc.icon className="w-4 h-4" />
-                        {svc.label}
-                      </button>
-                    ))}
+                    {SERVICE_TYPES.map((svc) => {
+                      const isSelected = form.service_types.includes(svc.value);
+                      return (
+                        <button
+                          key={svc.value}
+                          type="button"
+                          onClick={() => {
+                            const next = isSelected
+                              ? form.service_types.filter(s => s !== svc.value)
+                              : [...form.service_types, svc.value];
+                            setForm({ ...form, service_types: next });
+                          }}
+                          className={cn(
+                            "flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-all",
+                            isSelected
+                              ? "border-primary bg-primary/10 text-primary"
+                              : "border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
+                          )}
+                        >
+                          <svc.icon className="w-4 h-4" />
+                          {svc.label}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
 
