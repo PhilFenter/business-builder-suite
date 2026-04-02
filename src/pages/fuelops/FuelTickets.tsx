@@ -243,7 +243,14 @@ const FuelTickets = () => {
                     <Input
                       type="tel"
                       value={form.pilot_phone}
-                      onChange={(e) => setForm({ ...form, pilot_phone: e.target.value })}
+                      onChange={(e) => {
+                        const digits = e.target.value.replace(/\D/g, "").slice(0, 10);
+                        let formatted = digits;
+                        if (digits.length > 6) formatted = `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`;
+                        else if (digits.length > 3) formatted = `(${digits.slice(0,3)}) ${digits.slice(3)}`;
+                        else if (digits.length > 0) formatted = `(${digits}`;
+                        setForm({ ...form, pilot_phone: formatted });
+                      }}
                       placeholder="(555) 123-4567"
                     />
                   </div>
