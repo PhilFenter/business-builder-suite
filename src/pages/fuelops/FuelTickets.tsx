@@ -101,7 +101,10 @@ const FuelTickets = () => {
       toast({ title: "Missing field", description: "Please enter a customer or pilot name.", variant: "destructive" });
       return;
     }
-    if (isFuelService && !form.fuel_type) return;
+    if (isFuelService && !form.fuel_type) {
+      toast({ title: "Missing field", description: "Please select a fuel type.", variant: "destructive" });
+      return;
+    }
 
     setSubmitting(true);
 
