@@ -43,6 +43,7 @@ export interface FuelTicket {
   notes: string | null;
   status: string;
   service_type: string;
+  service_types: string[];
   created_by: string;
   assigned_driver_id: string | null;
   completed_at: string | null;
