@@ -34,15 +34,21 @@ interface RecentDelivery {
 interface RecentTicket {
   id: string;
   service_type: string;
+  service_types: string[];
   status: string;
   customer_name: string | null;
   aircraft_tail_number: string | null;
+  aircraft_type: string | null;
   fuel_type: string | null;
   gallons_requested: number | null;
   prist: boolean;
   requested_date: string | null;
   requested_time: string | null;
   created_at: string;
+  completed_at: string | null;
+  notes: string | null;
+  pilot_phone: string | null;
+  pilot_email: string | null;
   customers: { name: string } | null;
 }
 
