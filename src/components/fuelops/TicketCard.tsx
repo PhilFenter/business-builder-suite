@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Truck, Check, X, Fuel, Droplets, UtensilsCrossed, Snowflake, ClipboardList, Phone, Mail, MessageSquare, ChevronDown, ChevronUp, Pencil, Save } from "lucide-react";
+import { Truck, Check, X, Fuel, Droplets, UtensilsCrossed, Snowflake, ClipboardList, Phone, Mail, MessageSquare, ChevronDown, ChevronUp, Pencil, Save, CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import AircraftTypeInput from "@/components/fuelops/AircraftTypeInput";
