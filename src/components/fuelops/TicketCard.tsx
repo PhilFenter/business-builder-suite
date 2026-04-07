@@ -7,10 +7,12 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Truck, Check, X, Fuel, Droplets, UtensilsCrossed, Snowflake, ClipboardList, Phone, Mail, MessageSquare, ChevronDown, ChevronUp, Pencil, Save } from "lucide-react";
+import { Truck, Check, X, Fuel, Droplets, UtensilsCrossed, Snowflake, ClipboardList, Phone, Mail, MessageSquare, ChevronDown, ChevronUp, Pencil, Save, CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import AircraftTypeInput from "@/components/fuelops/AircraftTypeInput";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const SERVICE_TYPES = [
   { value: "fuel", label: "Fuel", icon: Fuel },
@@ -81,6 +83,7 @@ const TicketCard = ({ ticket, isDriver, onUpdate, onComplete, onEdit, driverName
     fuel_type: ticket.fuel_type ?? "",
     prist: ticket.prist,
     gallons_requested: ticket.gallons_requested?.toString() ?? "",
+    requested_date: ticket.requested_date ? new Date(ticket.requested_date + "T00:00:00") : undefined as Date | undefined,
     requested_time: ticket.requested_time?.slice(0, 5) ?? "",
     pilot_phone: ticket.pilot_phone ?? "",
     pilot_email: ticket.pilot_email ?? "",
@@ -109,6 +112,7 @@ const TicketCard = ({ ticket, isDriver, onUpdate, onComplete, onEdit, driverName
       fuel_type: ticket.fuel_type ?? "",
       prist: ticket.prist,
       gallons_requested: ticket.gallons_requested?.toString() ?? "",
+      requested_date: ticket.requested_date ? new Date(ticket.requested_date + "T00:00:00") : undefined,
       requested_time: ticket.requested_time?.slice(0, 5) ?? "",
       pilot_phone: ticket.pilot_phone ?? "",
       pilot_email: ticket.pilot_email ?? "",
@@ -127,6 +131,7 @@ const TicketCard = ({ ticket, isDriver, onUpdate, onComplete, onEdit, driverName
       fuel_type: editForm.fuel_type || null,
       prist: editForm.prist,
       gallons_requested: editForm.gallons_requested ? parseFloat(editForm.gallons_requested) : null,
+      requested_date: editForm.requested_date ? format(editForm.requested_date, "yyyy-MM-dd") : null,
       requested_time: editForm.requested_time || null,
       pilot_phone: editForm.pilot_phone || null,
       pilot_email: editForm.pilot_email || null,
@@ -263,6 +268,32 @@ const TicketCard = ({ ticket, isDriver, onUpdate, onComplete, onEdit, driverName
                       value={editForm.aircraft_type}
                       onChange={(v) => setEditForm({ ...editForm, aircraft_type: v })}
                     />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs">Service Date</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-full justify-start text-left font-normal",
+                            !editForm.requested_date && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="w-4 h-4 mr-2" />
+                          {editForm.requested_date ? format(editForm.requested_date, "PPP") : "Pick a date"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={editForm.requested_date}
+                          onSelect={(d) => setEditForm({ ...editForm, requested_date: d })}
+                          initialFocus
+                          className={cn("p-3 pointer-events-auto")}
+                        />
+                      </PopoverContent>
+                    </Popover>
                   </div>
                   <div className="space-y-1">
                     <Label className="text-xs">ETA / Departure Time</Label>
