@@ -280,7 +280,7 @@ const FuelLog = () => {
 
               {/* Fuel Type & Prist Row */}
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
+                <div className={cn("space-y-2 p-3 rounded-lg transition-colors", !form.fuel_type && "bg-destructive/10")}>
                   <Label>Fuel Type *</Label>
                   <Select value={form.fuel_type} onValueChange={(v) => setForm({ ...form, fuel_type: v as any })}>
                     <SelectTrigger><SelectValue placeholder="Select fuel type" /></SelectTrigger>
