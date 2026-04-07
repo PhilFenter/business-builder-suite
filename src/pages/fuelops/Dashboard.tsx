@@ -66,6 +66,30 @@ const STATUS_STYLES: Record<string, string> = {
   cancelled: "bg-muted text-muted-foreground",
 };
 
+const getDueBy = (ticket: RecentTicket): { label: string; urgent: boolean; soon: boolean } | null => {
+  if (!ticket.requested_date) return null;
+  const dateStr = ticket.requested_date;
+  const timeStr = ticket.requested_time; // HH:mm:ss or null
+  if (!timeStr) {
+    // Date only — show the date as due
+    const dueDate = new Date(dateStr + "T00:00:00");
+    const now = new Date();
+    const isToday = format(now, "yyyy-MM-dd") === dateStr;
+    return { label: format(dueDate, "MMM d"), urgent: false, soon: isToday };
+  }
+  // Build a full datetime, subtract 30 min for "due by"
+  const departure = new Date(`${dateStr}T${timeStr}`);
+  const dueBy = new Date(departure.getTime() - 30 * 60 * 1000);
+  const now = new Date();
+  const diffMin = (dueBy.getTime() - now.getTime()) / 60000;
+  const urgent = diffMin <= 0; // overdue
+  const soon = diffMin > 0 && diffMin <= 60; // within the hour
+  const isToday = format(now, "yyyy-MM-dd") === dateStr;
+  const timeLabel = format(dueBy, "h:mm a");
+  const label = isToday ? timeLabel : `${format(dueBy, "MMM d")} ${timeLabel}`;
+  return { label, urgent, soon };
+};
+
 const Dashboard = () => {
   const { hasRole } = useAuth();
   const navigate = useNavigate();
@@ -235,6 +259,18 @@ const Dashboard = () => {
                               {t.fuel_type && <span>· {t.fuel_type}</span>}
                               {t.gallons_requested && <span>· {t.gallons_requested} gal</span>}
                               {t.prist && <span>· Prist</span>}
+                              {(() => {
+                                const due = getDueBy(t);
+                                if (!due || isCompleted) return null;
+                                return (
+                                  <span className={cn(
+                                    "font-semibold",
+                                    due.urgent ? "text-destructive" : due.soon ? "text-amber-400" : "text-muted-foreground"
+                                  )}>
+                                    · Due {due.label}
+                                  </span>
+                                );
+                              })()}
                             </div>
                           </div>
                           <div className="flex items-center gap-2 shrink-0 ml-2">
