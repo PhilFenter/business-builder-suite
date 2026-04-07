@@ -131,6 +131,7 @@ const TicketCard = ({ ticket, isDriver, onUpdate, onComplete, onEdit, driverName
       fuel_type: editForm.fuel_type || null,
       prist: editForm.prist,
       gallons_requested: editForm.gallons_requested ? parseFloat(editForm.gallons_requested) : null,
+      requested_date: editForm.requested_date ? format(editForm.requested_date, "yyyy-MM-dd") : null,
       requested_time: editForm.requested_time || null,
       pilot_phone: editForm.pilot_phone || null,
       pilot_email: editForm.pilot_email || null,
