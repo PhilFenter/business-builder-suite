@@ -246,8 +246,8 @@ const FuelLog = () => {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-5">
               {/* Customer */}
-              <div className="space-y-2">
-                <Label>Customer / Pilot Name</Label>
+              <div className={cn("space-y-2 p-3 rounded-lg -mx-3 transition-colors", !form.customer_id && !form.customer_name && "bg-destructive/10")}>
+                <Label>Customer / Pilot Name *</Label>
                 <CustomerInput
                   customers={customers}
                   selectedId={form.customer_id}
