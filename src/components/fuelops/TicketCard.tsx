@@ -247,14 +247,45 @@ const TicketCard = ({ ticket, isDriver, onUpdate, onComplete, onEdit, driverName
           <div className="px-4 pb-4 pt-0 border-t border-border/50 space-y-3">
             {editing ? (
               <div className="space-y-3 pt-3" onClick={(e) => e.stopPropagation()}>
+                {/* Customer / Pilot Name */}
+                <div className="space-y-1">
+                  <Label className="text-xs">Customer / Pilot Name</Label>
+                  <Input
+                    value={editForm.customer_name}
+                    onChange={(e) => setEditForm({ ...editForm, customer_name: e.target.value })}
+                  />
+                </div>
+
+                {/* Pilot Phone & Email */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <Label className="text-xs">Customer / Pilot Name</Label>
+                    <Label className="text-xs">Pilot Phone</Label>
                     <Input
-                      value={editForm.customer_name}
-                      onChange={(e) => setEditForm({ ...editForm, customer_name: e.target.value })}
+                      type="tel"
+                      value={editForm.pilot_phone}
+                      onChange={(e) => {
+                        const digits = e.target.value.replace(/\D/g, "").slice(0, 10);
+                        let formatted = digits;
+                        if (digits.length > 6) formatted = `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`;
+                        else if (digits.length > 3) formatted = `(${digits.slice(0,3)}) ${digits.slice(3)}`;
+                        else if (digits.length > 0) formatted = `(${digits}`;
+                        setEditForm({ ...editForm, pilot_phone: formatted });
+                      }}
+                      placeholder="(555) 123-4567"
                     />
                   </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs">Pilot Email</Label>
+                    <Input
+                      type="email"
+                      value={editForm.pilot_email}
+                      onChange={(e) => setEditForm({ ...editForm, pilot_email: e.target.value })}
+                    />
+                  </div>
+                </div>
+
+                {/* Tail # & Aircraft Type */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="space-y-1">
                     <Label className="text-xs">Tail #</Label>
                     <Input
@@ -269,6 +300,10 @@ const TicketCard = ({ ticket, isDriver, onUpdate, onComplete, onEdit, driverName
                       onChange={(v) => setEditForm({ ...editForm, aircraft_type: v })}
                     />
                   </div>
+                </div>
+
+                {/* Service Date & ETA */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="space-y-1">
                     <Label className="text-xs">Service Date</Label>
                     <Popover>
@@ -305,6 +340,7 @@ const TicketCard = ({ ticket, isDriver, onUpdate, onComplete, onEdit, driverName
                   </div>
                 </div>
 
+                {/* Fuel Type, Gallons, Prist */}
                 {isFuel && (
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div className="space-y-1">
@@ -335,33 +371,7 @@ const TicketCard = ({ ticket, isDriver, onUpdate, onComplete, onEdit, driverName
                   </div>
                 )}
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div className="space-y-1">
-                    <Label className="text-xs">Pilot Phone</Label>
-                    <Input
-                      type="tel"
-                      value={editForm.pilot_phone}
-                      onChange={(e) => {
-                        const digits = e.target.value.replace(/\D/g, "").slice(0, 10);
-                        let formatted = digits;
-                        if (digits.length > 6) formatted = `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`;
-                        else if (digits.length > 3) formatted = `(${digits.slice(0,3)}) ${digits.slice(3)}`;
-                        else if (digits.length > 0) formatted = `(${digits}`;
-                        setEditForm({ ...editForm, pilot_phone: formatted });
-                      }}
-                      placeholder="(555) 123-4567"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <Label className="text-xs">Pilot Email</Label>
-                    <Input
-                      type="email"
-                      value={editForm.pilot_email}
-                      onChange={(e) => setEditForm({ ...editForm, pilot_email: e.target.value })}
-                    />
-                  </div>
-                </div>
-
+                {/* Notes */}
                 <div className="space-y-1">
                   <Label className="text-xs">Notes</Label>
                   <Textarea
