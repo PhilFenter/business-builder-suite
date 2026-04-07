@@ -270,6 +270,32 @@ const TicketCard = ({ ticket, isDriver, onUpdate, onComplete, onEdit, driverName
                     />
                   </div>
                   <div className="space-y-1">
+                    <Label className="text-xs">Service Date</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-full justify-start text-left font-normal",
+                            !editForm.requested_date && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="w-4 h-4 mr-2" />
+                          {editForm.requested_date ? format(editForm.requested_date, "PPP") : "Pick a date"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={editForm.requested_date}
+                          onSelect={(d) => setEditForm({ ...editForm, requested_date: d })}
+                          initialFocus
+                          className={cn("p-3 pointer-events-auto")}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                  <div className="space-y-1">
                     <Label className="text-xs">ETA / Departure Time</Label>
                     <Input
                       type="time"
