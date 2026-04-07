@@ -339,7 +339,7 @@ const FuelLog = () => {
 
               {/* Gallons & Price */}
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
+                <div className={cn("space-y-2 p-3 rounded-lg transition-colors", !form.gallons && "bg-destructive/10")}>
                   <Label>Gallons *</Label>
                   <Input
                     type="number" step="0.1" min="0"
@@ -348,7 +348,7 @@ const FuelLog = () => {
                     placeholder="0.0" required
                   />
                 </div>
-                <div className="space-y-2">
+                <div className={cn("space-y-2 p-3 rounded-lg transition-colors", !form.price_per_gallon && "bg-destructive/10")}>
                   <Label>Price/Gallon *</Label>
                   <Input
                     type="number" step="0.01" min="0"
