@@ -259,6 +259,18 @@ const Dashboard = () => {
                               {t.fuel_type && <span>· {t.fuel_type}</span>}
                               {t.gallons_requested && <span>· {t.gallons_requested} gal</span>}
                               {t.prist && <span>· Prist</span>}
+                              {(() => {
+                                const due = getDueBy(t);
+                                if (!due || isCompleted) return null;
+                                return (
+                                  <span className={cn(
+                                    "font-semibold",
+                                    due.urgent ? "text-destructive" : due.soon ? "text-amber-400" : "text-muted-foreground"
+                                  )}>
+                                    · Due {due.label}
+                                  </span>
+                                );
+                              })()}
                             </div>
                           </div>
                           <div className="flex items-center gap-2 shrink-0 ml-2">
