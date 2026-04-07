@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import FuelOpsLayout from "@/components/fuelops/FuelOpsLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
