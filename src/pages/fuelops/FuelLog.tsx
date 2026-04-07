@@ -260,7 +260,7 @@ const FuelLog = () => {
 
               {/* Aircraft Info Row */}
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
+                <div className={cn("space-y-2 p-3 rounded-lg transition-colors", !form.aircraft_tail_number && "bg-destructive/10")}>
                   <Label>Aircraft Tail # *</Label>
                   <Input
                     value={form.aircraft_tail_number}
