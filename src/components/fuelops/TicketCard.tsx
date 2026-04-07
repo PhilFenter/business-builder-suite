@@ -83,6 +83,7 @@ const TicketCard = ({ ticket, isDriver, onUpdate, onComplete, onEdit, driverName
     fuel_type: ticket.fuel_type ?? "",
     prist: ticket.prist,
     gallons_requested: ticket.gallons_requested?.toString() ?? "",
+    requested_date: ticket.requested_date ? new Date(ticket.requested_date + "T00:00:00") : undefined as Date | undefined,
     requested_time: ticket.requested_time?.slice(0, 5) ?? "",
     pilot_phone: ticket.pilot_phone ?? "",
     pilot_email: ticket.pilot_email ?? "",
