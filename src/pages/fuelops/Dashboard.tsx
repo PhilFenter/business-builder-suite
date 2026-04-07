@@ -91,7 +91,7 @@ const Dashboard = () => {
           .limit(5),
         supabase.from("fuel_tickets").select("status, completed_at"),
         supabase.from("fuel_tickets")
-          .select("id, service_type, status, customer_name, aircraft_tail_number, fuel_type, gallons_requested, prist, requested_date, requested_time, created_at, customers(name)")
+          .select("id, service_type, service_types, status, customer_name, aircraft_tail_number, aircraft_type, fuel_type, gallons_requested, prist, requested_date, requested_time, created_at, completed_at, notes, pilot_phone, pilot_email, customers(name)")
           .order("created_at", { ascending: false })
           .limit(10),
       ]);
