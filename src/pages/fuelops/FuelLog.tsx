@@ -175,6 +175,40 @@ const FuelLog = () => {
           <p className="text-muted-foreground text-sm">Record a new fuel delivery from the truck</p>
         </div>
 
+        {/* Ticket search — find and auto-fill from active tickets */}
+        {!ticketId && (
+          <Card className="border-border/50">
+            <CardContent className="p-4 space-y-2">
+              <Label className="text-sm font-medium flex items-center gap-2">
+                <ClipboardList className="w-4 h-4 text-primary" />
+                Fill from Service Ticket
+              </Label>
+              <TicketSearchInput
+                disabled={!!ticketData}
+                onSelectTicket={(ticket) => {
+                  setTicketData(ticket);
+                  // Update URL so submission links delivery to ticket
+                  const params = new URLSearchParams(searchParams);
+                  params.set("ticket", ticket.id);
+                  navigate(`/fuelops/log?${params.toString()}`, { replace: true });
+                  setForm({
+                    ...emptyForm,
+                    customer_id: ticket.customer_id ?? "",
+                    customer_name: ticket.customers?.name ?? ticket.customer_name ?? "",
+                    fuel_type: (ticket.fuel_type as "100LL" | "Jet-A") ?? "",
+                    gallons: ticket.gallons_requested ? String(ticket.gallons_requested) : "",
+                    aircraft_tail_number: ticket.aircraft_tail_number ?? "",
+                    aircraft_type: ticket.aircraft_type ?? "",
+                    prist: ticket.prist ?? false,
+                    notes: ticket.notes ?? "",
+                  });
+                }}
+              />
+              <p className="text-xs text-muted-foreground">Search by customer name or tail # to auto-fill from an active ticket</p>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Ticket banner */}
         {ticketData && (
           <Card className="border-primary/30 border-2 bg-primary/5">
@@ -191,8 +225,12 @@ const FuelLog = () => {
                   {ticketData.gallons_requested ? ` — ${ticketData.gallons_requested} gal requested` : ""}
                 </p>
               </div>
-              <Button variant="ghost" size="sm" onClick={() => navigate("/fuelops/tickets")}>
-                <ArrowLeft className="w-4 h-4 mr-1" /> Back
+              <Button variant="ghost" size="sm" onClick={() => {
+                setTicketData(null);
+                setForm({ ...emptyForm });
+                navigate("/fuelops/log", { replace: true });
+              }}>
+                <ArrowLeft className="w-4 h-4 mr-1" /> Clear
               </Button>
             </CardContent>
           </Card>
