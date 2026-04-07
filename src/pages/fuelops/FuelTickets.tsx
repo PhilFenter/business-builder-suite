@@ -160,6 +160,15 @@ const FuelTickets = () => {
     }
   };
 
+  const handleEdit = async (ticketId: string, updates: Partial<FuelTicket>) => {
+    const { error } = await supabase.from("fuel_tickets").update(updates as any).eq("id", ticketId);
+    if (error) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Ticket Updated", description: "Changes saved" });
+    }
+  };
+
   const activeTickets = tickets.filter(t => t.status === "pending" || t.status === "in_progress");
   const today = format(new Date(), "yyyy-MM-dd");
 
