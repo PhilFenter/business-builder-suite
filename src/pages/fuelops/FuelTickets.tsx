@@ -160,6 +160,15 @@ const FuelTickets = () => {
     }
   };
 
+  const handleEdit = async (ticketId: string, updates: Partial<FuelTicket>) => {
+    const { error } = await supabase.from("fuel_tickets").update(updates as any).eq("id", ticketId);
+    if (error) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Ticket Updated", description: "Changes saved" });
+    }
+  };
+
   const activeTickets = tickets.filter(t => t.status === "pending" || t.status === "in_progress");
   const today = format(new Date(), "yyyy-MM-dd");
 
@@ -434,7 +443,7 @@ const FuelTickets = () => {
               </Card>
             ) : (
               nowTickets.map((ticket) => (
-                <TicketCard key={ticket.id} ticket={ticket} isDriver={isDriver} onUpdate={updateStatus} onComplete={handleComplete} driverName={ticket.assigned_driver_id ? driverProfiles[ticket.assigned_driver_id] : null} />
+               <TicketCard key={ticket.id} ticket={ticket} isDriver={isDriver} onUpdate={updateStatus} onComplete={handleComplete} onEdit={handleEdit} driverName={ticket.assigned_driver_id ? driverProfiles[ticket.assigned_driver_id] : null} />
               ))
             )}
           </TabsContent>
@@ -455,7 +464,7 @@ const FuelTickets = () => {
                   Upcoming departures & scheduled services — review at shift start to prioritize fueling
                 </div>
                 {scheduledTickets.map((ticket) => (
-                  <TicketCard key={ticket.id} ticket={ticket} isDriver={isDriver} onUpdate={updateStatus} onComplete={handleComplete} driverName={ticket.assigned_driver_id ? driverProfiles[ticket.assigned_driver_id] : null} />
+                  <TicketCard key={ticket.id} ticket={ticket} isDriver={isDriver} onUpdate={updateStatus} onComplete={handleComplete} onEdit={handleEdit} driverName={ticket.assigned_driver_id ? driverProfiles[ticket.assigned_driver_id] : null} />
                 ))}
               </>
             )}
@@ -466,7 +475,7 @@ const FuelTickets = () => {
               <p className="text-muted-foreground text-sm text-center py-8">No completed tickets yet</p>
             ) : (
               completedTickets.slice(0, 20).map((ticket) => (
-                <TicketCard key={ticket.id} ticket={ticket} isDriver={isDriver} onUpdate={updateStatus} onComplete={handleComplete} driverName={ticket.assigned_driver_id ? driverProfiles[ticket.assigned_driver_id] : null} />
+                <TicketCard key={ticket.id} ticket={ticket} isDriver={isDriver} onUpdate={updateStatus} onComplete={handleComplete} onEdit={handleEdit} driverName={ticket.assigned_driver_id ? driverProfiles[ticket.assigned_driver_id] : null} />
               ))
             )}
           </TabsContent>
