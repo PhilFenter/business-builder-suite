@@ -443,7 +443,7 @@ const FuelTickets = () => {
               </Card>
             ) : (
               nowTickets.map((ticket) => (
-                <TicketCard key={ticket.id} ticket={ticket} isDriver={isDriver} onUpdate={updateStatus} onComplete={handleComplete} driverName={ticket.assigned_driver_id ? driverProfiles[ticket.assigned_driver_id] : null} />
+               <TicketCard key={ticket.id} ticket={ticket} isDriver={isDriver} onUpdate={updateStatus} onComplete={handleComplete} onEdit={handleEdit} driverName={ticket.assigned_driver_id ? driverProfiles[ticket.assigned_driver_id] : null} />
               ))
             )}
           </TabsContent>
