@@ -16,6 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import AircraftTypeInput from "@/components/fuelops/AircraftTypeInput";
 import CustomerInput from "@/components/fuelops/CustomerInput";
+import TicketSearchInput from "@/components/fuelops/TicketSearchInput";
 
 import type { Tables } from "@/integrations/supabase/types";
 
