@@ -357,8 +357,22 @@ const TicketCard = ({ ticket, isDriver, onUpdate, onComplete, onEdit, driverName
                       <Label className="text-xs">Gallons</Label>
                       <Input
                         type="number"
+                        step="0.01"
+                        min="0"
+                        inputMode="decimal"
                         value={editForm.gallons_requested}
-                        onChange={(e) => setEditForm({ ...editForm, gallons_requested: e.target.value })}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          if (val === "" || /^\d*\.?\d{0,2}$/.test(val)) {
+                            setEditForm({ ...editForm, gallons_requested: val });
+                          }
+                        }}
+                        onBlur={(e) => {
+                          const num = parseFloat(e.target.value);
+                          if (!isNaN(num)) {
+                            setEditForm({ ...editForm, gallons_requested: (Math.round(num * 100) / 100).toString() });
+                          }
+                        }}
                       />
                     </div>
                     <div className="flex items-end gap-2 pb-1">
