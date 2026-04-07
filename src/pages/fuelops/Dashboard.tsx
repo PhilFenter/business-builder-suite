@@ -68,12 +68,14 @@ const STATUS_STYLES: Record<string, string> = {
 
 const Dashboard = () => {
   const { hasRole } = useAuth();
+  const navigate = useNavigate();
   const [stats, setStats] = useState<DashboardStats>({
     totalDeliveries: 0, totalGallons: 0, totalRevenue: 0, activeCustomers: 0,
     ticketsPending: 0, ticketsInProgress: 0, ticketsCompletedToday: 0,
   });
   const [recentDeliveries, setRecentDeliveries] = useState<RecentDelivery[]>([]);
   const [recentTickets, setRecentTickets] = useState<RecentTicket[]>([]);
+  const [expandedTicket, setExpandedTicket] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
