@@ -82,7 +82,7 @@ const getDueBy = (ticket: RecentTicket): { label: string; urgent: boolean; soon:
   const dueBy = new Date(departure.getTime() - 30 * 60 * 1000);
   const now = new Date();
   const diffMin = (dueBy.getTime() - now.getTime()) / 60000;
-  const urgent = diffMin <= 0; // overdue
+  const urgent = false; // no red highlighting for past-due
   const soon = diffMin > 0 && diffMin <= 60; // within the hour
   const isToday = format(now, "yyyy-MM-dd") === dateStr;
   const timeLabel = format(dueBy, "h:mm a");
