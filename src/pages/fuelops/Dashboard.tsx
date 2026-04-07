@@ -4,11 +4,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import FuelOpsLayout from "@/components/fuelops/FuelOpsLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Fuel, TrendingUp, Users, DollarSign, Truck, ClipboardList, Clock, CheckCircle2, AlertCircle } from "lucide-react";
+import { Fuel, TrendingUp, Users, DollarSign, Truck, ClipboardList, Clock, CheckCircle2, AlertCircle, ChevronDown, ChevronUp, ExternalLink } from "lucide-react";
 import FuelPriceCard from "@/components/fuelops/FuelPriceCard";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 interface DashboardStats {
   totalDeliveries: number;
@@ -34,15 +34,21 @@ interface RecentDelivery {
 interface RecentTicket {
   id: string;
   service_type: string;
+  service_types: string[];
   status: string;
   customer_name: string | null;
   aircraft_tail_number: string | null;
+  aircraft_type: string | null;
   fuel_type: string | null;
   gallons_requested: number | null;
   prist: boolean;
   requested_date: string | null;
   requested_time: string | null;
   created_at: string;
+  completed_at: string | null;
+  notes: string | null;
+  pilot_phone: string | null;
+  pilot_email: string | null;
   customers: { name: string } | null;
 }
 
@@ -62,12 +68,14 @@ const STATUS_STYLES: Record<string, string> = {
 
 const Dashboard = () => {
   const { hasRole } = useAuth();
+  const navigate = useNavigate();
   const [stats, setStats] = useState<DashboardStats>({
     totalDeliveries: 0, totalGallons: 0, totalRevenue: 0, activeCustomers: 0,
     ticketsPending: 0, ticketsInProgress: 0, ticketsCompletedToday: 0,
   });
   const [recentDeliveries, setRecentDeliveries] = useState<RecentDelivery[]>([]);
   const [recentTickets, setRecentTickets] = useState<RecentTicket[]>([]);
+  const [expandedTicket, setExpandedTicket] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -83,7 +91,7 @@ const Dashboard = () => {
           .limit(5),
         supabase.from("fuel_tickets").select("status, completed_at"),
         supabase.from("fuel_tickets")
-          .select("id, service_type, status, customer_name, aircraft_tail_number, fuel_type, gallons_requested, prist, requested_date, requested_time, created_at, customers(name)")
+          .select("id, service_type, service_types, status, customer_name, aircraft_tail_number, aircraft_type, fuel_type, gallons_requested, prist, requested_date, requested_time, created_at, completed_at, notes, pilot_phone, pilot_email, customers(name)")
           .order("created_at", { ascending: false })
           .limit(10),
       ]);
@@ -191,29 +199,111 @@ const Dashboard = () => {
                 <p className="text-muted-foreground text-sm">No tickets yet.</p>
               ) : (
                 <div className="space-y-2">
-                  {recentTickets.map((t) => (
-                    <div key={t.id} className="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-secondary/30 border border-border/30">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium truncate">
-                            {t.customers?.name || t.customer_name || "—"}
-                          </span>
-                          <Badge variant="outline" className="text-[10px] shrink-0">
-                            {SERVICE_LABELS[t.service_type] || t.service_type}
-                          </Badge>
-                        </div>
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
-                          {t.aircraft_tail_number && <span>{t.aircraft_tail_number}</span>}
-                          {t.fuel_type && <span>· {t.fuel_type}</span>}
-                          {t.gallons_requested && <span>· {t.gallons_requested} gal</span>}
-                          {t.prist && <span>· Prist</span>}
-                        </div>
+                  {recentTickets.map((t) => {
+                    const isCompleted = t.status === "completed";
+                    const isExpanded = expandedTicket === t.id;
+                    const displayName = t.customers?.name || t.customer_name || "—";
+
+                    return (
+                      <div key={t.id}>
+                        <button
+                          type="button"
+                          className={cn(
+                            "w-full flex items-center justify-between py-2 px-3 rounded-lg border border-border/30 text-left transition-colors",
+                            isCompleted
+                              ? "hover:bg-green-500/5 cursor-pointer"
+                              : "hover:bg-secondary/30 cursor-pointer",
+                            isExpanded && !isCompleted && "bg-secondary/30 border-primary/30"
+                          )}
+                          onClick={() => {
+                            if (isCompleted) {
+                              navigate(`/fuelops/reports?search=${encodeURIComponent(displayName)}`);
+                            } else {
+                              setExpandedTicket(isExpanded ? null : t.id);
+                            }
+                          }}
+                        >
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium truncate">{displayName}</span>
+                              <Badge variant="outline" className="text-[10px] shrink-0">
+                                {SERVICE_LABELS[t.service_type] || t.service_type}
+                              </Badge>
+                            </div>
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
+                              {t.aircraft_tail_number && <span>{t.aircraft_tail_number}</span>}
+                              {t.fuel_type && <span>· {t.fuel_type}</span>}
+                              {t.gallons_requested && <span>· {t.gallons_requested} gal</span>}
+                              {t.prist && <span>· Prist</span>}
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2 shrink-0 ml-2">
+                            <Badge className={cn("text-[10px]", STATUS_STYLES[t.status] || "")}>
+                              {t.status.replace("_", " ")}
+                            </Badge>
+                            {isCompleted ? (
+                              <ExternalLink className="w-3.5 h-3.5 text-muted-foreground" />
+                            ) : (
+                              isExpanded ? <ChevronUp className="w-3.5 h-3.5 text-muted-foreground" /> : <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
+                            )}
+                          </div>
+                        </button>
+
+                        {/* Expanded detail panel for non-completed tickets */}
+                        {isExpanded && !isCompleted && (
+                          <div className="mt-1 mx-1 p-3 rounded-lg bg-secondary/20 border border-border/30 space-y-2 text-sm">
+                            <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
+                              <div>
+                                <span className="text-muted-foreground text-xs">Customer</span>
+                                <p className="font-medium">{displayName}</p>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground text-xs">Aircraft</span>
+                                <p className="font-medium">{t.aircraft_tail_number || "—"}{t.aircraft_type ? ` (${t.aircraft_type})` : ""}</p>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground text-xs">Fuel Type</span>
+                                <p className="font-medium">{t.fuel_type || "—"}{t.prist ? " + Prist" : ""}</p>
+                              </div>
+                              <div>
+                                <span className="text-muted-foreground text-xs">Gallons</span>
+                                <p className="font-medium">{t.gallons_requested ? `${t.gallons_requested} gal` : "—"}</p>
+                              </div>
+                              {t.requested_date && (
+                                <div>
+                                  <span className="text-muted-foreground text-xs">Requested</span>
+                                  <p className="font-medium">{format(new Date(t.requested_date), "MMM d")}{t.requested_time ? ` at ${t.requested_time}` : ""}</p>
+                                </div>
+                              )}
+                              <div>
+                                <span className="text-muted-foreground text-xs">Services</span>
+                                <p className="font-medium">{(t.service_types ?? [t.service_type]).map(s => SERVICE_LABELS[s] || s).join(", ")}</p>
+                              </div>
+                              {t.pilot_phone && (
+                                <div>
+                                  <span className="text-muted-foreground text-xs">Phone</span>
+                                  <p className="font-medium">{t.pilot_phone}</p>
+                                </div>
+                              )}
+                              {t.pilot_email && (
+                                <div>
+                                  <span className="text-muted-foreground text-xs">Email</span>
+                                  <p className="font-medium">{t.pilot_email}</p>
+                                </div>
+                              )}
+                            </div>
+                            {t.notes && (
+                              <div>
+                                <span className="text-muted-foreground text-xs">Notes</span>
+                                <p className="text-sm">{t.notes}</p>
+                              </div>
+                            )}
+                            <p className="text-[10px] text-muted-foreground">Created {format(new Date(t.created_at), "MMM d, h:mm a")}</p>
+                          </div>
+                        )}
                       </div>
-                      <Badge className={cn("text-[10px] shrink-0 ml-2", STATUS_STYLES[t.status] || "")}>
-                        {t.status.replace("_", " ")}
-                      </Badge>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </CardContent>

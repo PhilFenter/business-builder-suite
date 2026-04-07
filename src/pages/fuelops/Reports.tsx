@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import FuelOpsLayout from "@/components/fuelops/FuelOpsLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,11 +26,12 @@ const STATUS_STYLES: Record<string, string> = {
 };
 
 const Reports = () => {
+  const [searchParams] = useSearchParams();
   const [tickets, setTickets] = useState<any[]>([]);
   const [deliveries, setDeliveries] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [ticketSearch, setTicketSearch] = useState("");
-  const [ticketStatusFilter, setTicketStatusFilter] = useState("all");
+  const [ticketSearch, setTicketSearch] = useState(searchParams.get("search") ?? "");
+  const [ticketStatusFilter, setTicketStatusFilter] = useState(searchParams.get("search") ? "completed" : "all");
   const [deliverySearch, setDeliverySearch] = useState("");
 
   useEffect(() => {
