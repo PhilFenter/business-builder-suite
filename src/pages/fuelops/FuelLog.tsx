@@ -101,19 +101,21 @@ const FuelLog = () => {
           return;
         }
         setTicketData(data);
+        const fuelType = (data.fuel_type as "100LL" | "Jet-A") ?? "";
         setForm({
           ...emptyForm,
           customer_id: data.customer_id ?? "",
           customer_name: data.customers?.name ?? data.customer_name ?? "",
-          fuel_type: (data.fuel_type as "100LL" | "Jet-A") ?? "",
+          fuel_type: fuelType,
           gallons: data.gallons_requested ? String(data.gallons_requested) : "",
+          price_per_gallon: fuelType && fuelPrices[fuelType] ? String(fuelPrices[fuelType]) : "",
           aircraft_tail_number: data.aircraft_tail_number ?? "",
           aircraft_type: data.aircraft_type ?? "",
           prist: data.prist ?? false,
           notes: data.notes ?? "",
         });
       });
-  }, [ticketId]);
+  }, [ticketId, fuelPrices]);
 
   const meterGallons = form.meter_start && form.meter_stop
     ? Math.max(0, parseFloat(form.meter_stop) - parseFloat(form.meter_start)).toFixed(1)
@@ -208,12 +210,14 @@ const FuelLog = () => {
                   const params = new URLSearchParams(searchParams);
                   params.set("ticket", ticket.id);
                   navigate(`/fuelops/log?${params.toString()}`, { replace: true });
+                  const ft = (ticket.fuel_type as "100LL" | "Jet-A") ?? "";
                   setForm({
                     ...emptyForm,
                     customer_id: ticket.customer_id ?? "",
                     customer_name: ticket.customers?.name ?? ticket.customer_name ?? "",
-                    fuel_type: (ticket.fuel_type as "100LL" | "Jet-A") ?? "",
+                    fuel_type: ft,
                     gallons: ticket.gallons_requested ? String(ticket.gallons_requested) : "",
+                    price_per_gallon: ft && fuelPrices[ft] ? String(fuelPrices[ft]) : "",
                     aircraft_tail_number: ticket.aircraft_tail_number ?? "",
                     aircraft_type: ticket.aircraft_type ?? "",
                     prist: ticket.prist ?? false,
