@@ -62,11 +62,19 @@ const FuelLog = () => {
   const [success, setSuccess] = useState(false);
   const [ticketData, setTicketData] = useState<any>(null);
   const [form, setForm] = useState<FormState>({ ...emptyForm });
+  const [fuelPrices, setFuelPrices] = useState<Record<string, number>>({});
 
-  // Fetch customers
+  // Fetch customers and today's fuel prices
   useEffect(() => {
     supabase.from("customers").select("*").eq("is_active", true).order("name").then(({ data }) => {
       if (data) setCustomers(data);
+    });
+
+    const today = new Date().toISOString().split("T")[0];
+    supabase.from("fuel_prices").select("fuel_type, price_per_gallon").eq("effective_date", today).then(({ data }) => {
+      const map: Record<string, number> = {};
+      (data ?? []).forEach((p: any) => { map[p.fuel_type] = p.price_per_gallon; });
+      setFuelPrices(map);
     });
   }, []);
 
