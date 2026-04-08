@@ -70,12 +70,21 @@ const FuelLog = () => {
       if (data) setCustomers(data);
     });
 
+    // Fetch the most recent price for each fuel type (today or earlier)
     const today = new Date().toISOString().split("T")[0];
-    supabase.from("fuel_prices").select("fuel_type, price_per_gallon").eq("effective_date", today).then(({ data }) => {
-      const map: Record<string, number> = {};
-      (data ?? []).forEach((p: any) => { map[p.fuel_type] = p.price_per_gallon; });
-      setFuelPrices(map);
-    });
+    supabase
+      .from("fuel_prices")
+      .select("fuel_type, price_per_gallon")
+      .lte("effective_date", today)
+      .order("effective_date", { ascending: false })
+      .then(({ data }) => {
+        const map: Record<string, number> = {};
+        (data ?? []).forEach((p: any) => {
+          // Only keep the first (most recent) price per fuel type
+          if (!map[p.fuel_type]) map[p.fuel_type] = p.price_per_gallon;
+        });
+        setFuelPrices(map);
+      });
   }, []);
 
   // If ticket ID in URL, fetch ticket and pre-fill
