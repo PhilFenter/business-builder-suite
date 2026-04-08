@@ -210,12 +210,14 @@ const FuelLog = () => {
                   const params = new URLSearchParams(searchParams);
                   params.set("ticket", ticket.id);
                   navigate(`/fuelops/log?${params.toString()}`, { replace: true });
+                  const ft = (ticket.fuel_type as "100LL" | "Jet-A") ?? "";
                   setForm({
                     ...emptyForm,
                     customer_id: ticket.customer_id ?? "",
                     customer_name: ticket.customers?.name ?? ticket.customer_name ?? "",
-                    fuel_type: (ticket.fuel_type as "100LL" | "Jet-A") ?? "",
+                    fuel_type: ft,
                     gallons: ticket.gallons_requested ? String(ticket.gallons_requested) : "",
+                    price_per_gallon: ft && fuelPrices[ft] ? String(fuelPrices[ft]) : "",
                     aircraft_tail_number: ticket.aircraft_tail_number ?? "",
                     aircraft_type: ticket.aircraft_type ?? "",
                     prist: ticket.prist ?? false,
