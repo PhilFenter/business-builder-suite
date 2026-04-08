@@ -115,7 +115,7 @@ const FuelLog = () => {
           notes: data.notes ?? "",
         });
       });
-  }, [ticketId]);
+  }, [ticketId, fuelPrices]);
 
   const meterGallons = form.meter_start && form.meter_stop
     ? Math.max(0, parseFloat(form.meter_stop) - parseFloat(form.meter_start)).toFixed(1)
