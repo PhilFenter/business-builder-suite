@@ -101,12 +101,14 @@ const FuelLog = () => {
           return;
         }
         setTicketData(data);
+        const fuelType = (data.fuel_type as "100LL" | "Jet-A") ?? "";
         setForm({
           ...emptyForm,
           customer_id: data.customer_id ?? "",
           customer_name: data.customers?.name ?? data.customer_name ?? "",
-          fuel_type: (data.fuel_type as "100LL" | "Jet-A") ?? "",
+          fuel_type: fuelType,
           gallons: data.gallons_requested ? String(data.gallons_requested) : "",
+          price_per_gallon: fuelType && fuelPrices[fuelType] ? String(fuelPrices[fuelType]) : "",
           aircraft_tail_number: data.aircraft_tail_number ?? "",
           aircraft_type: data.aircraft_type ?? "",
           prist: data.prist ?? false,
