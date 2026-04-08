@@ -62,11 +62,19 @@ const FuelLog = () => {
   const [success, setSuccess] = useState(false);
   const [ticketData, setTicketData] = useState<any>(null);
   const [form, setForm] = useState<FormState>({ ...emptyForm });
+  const [fuelPrices, setFuelPrices] = useState<Record<string, number>>({});
 
-  // Fetch customers
+  // Fetch customers and today's fuel prices
   useEffect(() => {
     supabase.from("customers").select("*").eq("is_active", true).order("name").then(({ data }) => {
       if (data) setCustomers(data);
+    });
+
+    const today = new Date().toISOString().split("T")[0];
+    supabase.from("fuel_prices").select("fuel_type, price_per_gallon").eq("effective_date", today).then(({ data }) => {
+      const map: Record<string, number> = {};
+      (data ?? []).forEach((p: any) => { map[p.fuel_type] = p.price_per_gallon; });
+      setFuelPrices(map);
     });
   }, []);
 
@@ -282,7 +290,10 @@ const FuelLog = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className={cn("space-y-2 p-3 rounded-lg transition-colors", !form.fuel_type && "bg-destructive/10")}>
                   <Label>Fuel Type *</Label>
-                  <Select value={form.fuel_type} onValueChange={(v) => setForm({ ...form, fuel_type: v as any })}>
+                  <Select value={form.fuel_type} onValueChange={(v) => {
+                    const price = fuelPrices[v];
+                    setForm({ ...form, fuel_type: v as any, ...(price && !form.price_per_gallon ? { price_per_gallon: String(price) } : {}) });
+                  }}>
                     <SelectTrigger><SelectValue placeholder="Select fuel type" /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="100LL">100LL (Avgas)</SelectItem>
